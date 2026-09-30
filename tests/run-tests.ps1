@@ -62,6 +62,11 @@ function Test-BotControlContract {
   Assert-True ($gui -match 'HotKeySet\("\{F12\}",\s*"Hot_key"\)') "F12 quick-stop hotkey is not registered"
   Assert-True ($gui -match 'Case\s+"\{F11\}"[\s\S]*?duel_bot\(\)') "F11 does not start duel_bot()"
   Assert-True ($gui -match 'Case\s+"\{F12\}"[\s\S]*?Exit') "F12 does not stop the bot"
+  Assert-True ($gui -match 'GUICtrlCreateCombo\("中文"') "Native GUI language selector is missing"
+  Assert-True ($gui -match 'Func\s+Tr\(') "Native GUI translation helper is missing"
+  Assert-True ($gui -match 'Func\s+Apply_language\(') "Native GUI language apply function is missing"
+  Assert-True ($gui -match 'Case\s+\$cLanguage[\s\S]*?Apply_language\(\)') "Native GUI language selector does not apply translations"
+  Assert-True ($gui -match 'Case\s+\$but_stop[\s\S]*?Exit') "Native GUI stop button does not stop the bot"
 
   Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
   Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"
