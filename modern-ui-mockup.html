@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Duel Links Bot UI Mockup</title>
+  <style>
+    :root {
+      --ink: #1b2028;
+      --muted: #697280;
+      --line: #dde4ee;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --field: #f4f7fb;
+      --accent: #0b8f7a;
+      --accent-strong: #086b5b;
+      --amber: #d18b00;
+      --rose: #cf3f50;
+      --blue: #2368c4;
+      --shadow: 0 24px 70px rgba(36, 46, 64, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Aptos", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(11, 143, 122, 0.16), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(209, 139, 0, 0.15), transparent 30rem),
+        linear-gradient(135deg, #eef5f2 0%, #f8f2e6 52%, #edf3fb 100%);
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 32px auto;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      background: rgba(250, 252, 255, 0.78);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      box-shadow: 0 12px 24px rgba(11, 143, 122, 0.3);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 20px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .subtle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .select,
+    .button,
+    .icon-button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-solid);
+      color: var(--ink);
+      font: inherit;
+      min-height: 38px;
+    }
+
+    .select {
+      padding: 0 34px 0 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      border-color: var(--accent);
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      box-shadow: 0 10px 24px rgba(11, 143, 122, 0.25);
+    }
+
+    .button.danger {
+      border-color: var(--rose);
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--rose), #9e2636);
+      box-shadow: 0 10px 24px rgba(207, 63, 80, 0.22);
+    }
+
+    .shortcut-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .keycap {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.76);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr) 310px;
+      min-height: 650px;
+    }
+
+    .sidebar,
+    .rightbar {
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.54);
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+    }
+
+    .rightbar {
+      border-left: 1px solid var(--line);
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      font: inherit;
+      text-align: left;
+    }
+
+    .nav button.active {
+      color: var(--ink);
+      border-color: rgba(11, 143, 122, 0.22);
+      background: rgba(11, 143, 122, 0.1);
+    }
+
+    .main {
+      padding: 20px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric,
+    .panel,
+    .log-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .metric {
+      padding: 15px;
+    }
+
+    .metric-label,
+    .field-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .metric-value {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 750;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(11, 143, 122, 0.14);
+    }
+
+    .panel {
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title h2,
+    .panel-title h3 {
+      font-size: 16px;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mode {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--field);
+    }
+
+    .mode.active {
+      border-color: rgba(11, 143, 122, 0.5);
+      background: rgba(11, 143, 122, 0.1);
+    }
+
+    .mode strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .mode span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .input {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--field);
+      padding: 0 11px;
+      font: inherit;
+      color: var(--ink);
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .switch-row:first-child {
+      border-top: 0;
+    }
+
+    .toggle {
+      position: relative;
+      flex: 0 0 auto;
+      width: 45px;
+      height: 24px;
+      border-radius: 999px;
+      background: #cad4df;
+    }
+
+    .toggle.on {
+      background: var(--accent);
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 160ms ease;
+    }
+
+    .toggle.on::after {
+      transform: translateX(21px);
+    }
+
+    .log-panel {
+      overflow: hidden;
+    }
+
+    .log-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .log-body {
+      height: 250px;
+      overflow: auto;
+      padding: 11px 15px 15px;
+      background: #121821;
+      color: #d9f3ec;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    .log-line {
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .log-time {
+      color: #7fb8ff;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: var(--accent-strong);
+      background: rgba(11, 143, 122, 0.12);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .badge.warn {
+      color: #8a5a00;
+      background: rgba(209, 139, 0, 0.14);
+    }
+
+    .event-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .event-item {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--field);
+    }
+
+    .event-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .event-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .simple-runner {
+      display: none;
+      padding: 20px;
+      min-height: 650px;
+    }
+
+    .run-card {
+      display: grid;
+      gap: 18px;
+      min-height: 610px;
+      align-content: center;
+      justify-items: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(244, 247, 251, 0.92)),
+        radial-gradient(circle at center, rgba(11, 143, 122, 0.15), transparent 24rem);
+      text-align: center;
+    }
+
+    .run-orbit {
+      display: grid;
+      width: 132px;
+      height: 132px;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(11, 143, 122, 0.12);
+      box-shadow: inset 0 0 0 14px rgba(11, 143, 122, 0.08);
+    }
+
+    .run-pulse {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 16px rgba(11, 143, 122, 0.14);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .run-title {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .run-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 160px));
+      gap: 10px;
+      width: min(540px, 100%);
+    }
+
+    .run-summary .metric {
+      background: rgba(255, 255, 255, 0.78);
+      text-align: left;
+    }
+
+    body.is-running .layout {
+      display: none;
+    }
+
+    body.is-running .simple-runner {
+      display: block;
+    }
+
+    body.is-running [data-run-action="start"] {
+      display: none;
+    }
+
+    body:not(.is-running) [data-run-action="stop"] {
+      display: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(0.94);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .rightbar {
+        border: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .sidebar {
+        order: 2;
+      }
+
+      .rightbar {
+        order: 3;
+      }
+
+      .status-grid,
+      .form-grid,
+      .run-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app-shell {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .topbar,
+      .footer-actions,
+      .top-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button,
+      .select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">DL</div>
+        <div>
+          <h1 data-i18n="title">Duel Links 自动助手</h1>
+          <p class="subtle" data-i18n="subtitle">运行控制、事件任务与日志监控</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <select class="select" id="languageSelect" aria-label="Language">
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+        <div class="shortcut-strip">
+          <span class="keycap" data-i18n="shortcutStart">F11 启动</span>
+          <span class="keycap" data-i18n="shortcutStop">F12 停止</span>
+        </div>
+        <button class="button" type="button" data-i18n="pause">暂停</button>
+        <button class="button primary" type="button" data-run-action="start" data-i18n="start">开始决斗</button>
+        <button class="button danger" type="button" data-run-action="stop" data-i18n="stop">停止运行</button>
+      </div>
+    </header>
+
+    <section class="simple-runner" aria-live="polite">
+      <div class="run-card">
+        <div class="run-orbit"><div class="run-pulse"></div></div>
+        <div>
+          <div class="run-title" data-i18n="simpleRunningTitle">正在自动运行</div>
+          <p class="subtle" data-i18n="simpleRunningHint">为避免误操作，详细配置已收起；按 F12 或点击停止后返回设置界面。</p>
+        </div>
+        <div class="run-summary">
+          <div class="metric">
+            <div class="metric-label" data-i18n="currentTask">当前任务</div>
+            <div class="metric-value" data-i18n="streetDuel">街头决斗</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label" data-i18n="runtimeLabel">本轮运行</div>
+            <div class="metric-value">49.5s</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label" data-i18n="lastAction">最近动作</div>
+            <div class="metric-value" data-i18n="log1">等待决斗</div>
+          </div>
+        </div>
+        <div class="shortcut-strip">
+          <span class="keycap" data-i18n="shortcutStop">F12 停止</span>
+          <span class="keycap" data-i18n="shortcutPause">F9 暂停/继续</span>
+        </div>
+        <button class="button danger" type="button" data-run-action="stop" data-i18n="stop">停止运行</button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <nav class="nav" aria-label="Main">
+          <button class="active" type="button"><span>◎</span><span data-i18n="navDashboard">控制台</span></button>
+          <button type="button"><span>◆</span><span data-i18n="navDuel">决斗模式</span></button>
+          <button type="button"><span>◇</span><span data-i18n="navEvents">活动任务</span></button>
+          <button type="button"><span>▣</span><span data-i18n="navSettings">设置</span></button>
+          <button type="button"><span>?</span><span data-i18n="navHelp">帮助</span></button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <section class="status-grid">
+          <div class="metric">
+            <div class="metric-label" data-i18n="statusLabel">状态</div>
+            <div class="metric-value"><span class="dot"></span><span data-i18n="running">运行中</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-label" data-i18n="worldLabel">世界</div>
+            <div class="metric-value">Yu-Gi-Oh</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label" data-i18n="runtimeLabel">本轮运行</div>
+            <div class="metric-value">49.5s</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2 data-i18n="duelMode">决斗模式</h2>
+            <span class="badge" data-i18n="enabled">已启用</span>
+          </div>
+          <div class="mode-grid">
+            <div class="mode active">
+              <strong data-i18n="streetDuel">街头决斗</strong>
+              <span data-i18n="streetHint">自动巡回区域并拾取奖励</span>
+            </div>
+            <div class="mode">
+              <strong data-i18n="gateDuel">传送门决斗</strong>
+              <span data-i18n="gateHint">指定次数挑战传奇决斗者</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2 data-i18n="quickConfig">快速配置</h2>
+          </div>
+          <div class="form-grid">
+            <label class="field">
+              <span class="field-label" data-i18n="world">世界</span>
+              <select class="input">
+                <option>Yu-Gi-Oh</option>
+                <option>Yu-Gi-Oh GX</option>
+                <option>5DS</option>
+                <option>Zexal</option>
+                <option>ARCV</option>
+                <option>Vrains</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label" data-i18n="startArea">起始区域</span>
+              <select class="input">
+                <option data-i18n="areaGate">传送门</option>
+                <option data-i18n="areaStreet">决斗世界</option>
+                <option data-i18n="areaShop">卡片商店</option>
+                <option data-i18n="areaStudio">卡片工作室</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="log-panel">
+          <div class="log-head">
+            <h2 data-i18n="logTitle">运行日志</h2>
+            <span class="badge warn" data-i18n="pausedBadge">F9 暂停/继续 · F11 启动 · F12 停止</span>
+          </div>
+          <div class="log-body" aria-label="Log output">
+            <div class="log-line"><span class="log-time">20:00:52</span><span data-i18n="log1">等待决斗</span></div>
+            <div class="log-line"><span class="log-time">20:00:53</span><span data-i18n="log2">检测到 Ashley，34 像素匹配</span></div>
+            <div class="log-line"><span class="log-time">20:00:54</span><span data-i18n="log3">读取对话</span></div>
+            <div class="log-line"><span class="log-time">20:00:56</span><span data-i18n="log4">机器人已暂停</span></div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rightbar">
+        <section class="panel">
+          <div class="panel-title">
+            <h3 data-i18n="automation">自动化</h3>
+          </div>
+          <div class="switch-row">
+            <div>
+              <strong data-i18n="loopArea">循环区域</strong>
+              <p class="subtle" data-i18n="loopHint">清空后继续下一轮</p>
+            </div>
+            <span class="toggle on"></span>
+          </div>
+          <div class="switch-row">
+            <div>
+              <strong data-i18n="autoOrb">自动使用决斗珠</strong>
+              <p class="subtle" data-i18n="orbHint">标准决斗者耗尽后触发</p>
+            </div>
+            <span class="toggle"></span>
+          </div>
+          <div class="switch-row">
+            <div>
+              <strong data-i18n="checkGems">检查宝石</strong>
+              <p class="subtle" data-i18n="gemsHint">巡回时扫描场景奖励</p>
+            </div>
+            <span class="toggle on"></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h3 data-i18n="inputControl">输入控制</h3>
+            <span class="badge warn" data-i18n="mouseControl">会接管鼠标</span>
+          </div>
+          <p class="subtle" data-i18n="inputControlHint">运行期间会移动并点击鼠标来操作游戏窗口；需要立即停止时按 F12。</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h3 data-i18n="events">活动任务</h3>
+          </div>
+          <div class="event-list">
+            <div class="event-item">
+              <strong data-i18n="battleCity">Battle City Showdown</strong>
+              <span data-i18n="battleHint">抽卡、Devine Trial、路线推进</span>
+            </div>
+            <div class="event-item">
+              <strong data-i18n="tagDuel">Tag Duel</strong>
+              <span data-i18n="tagHint">可作为独立任务启动</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer-actions">
+          <button class="button" type="button" data-i18n="savePreset">保存预设</button>
+          <button class="button primary" type="button" data-run-action="start" data-i18n="runNow">立即运行</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const messages = {
+      zh: {
+        title: "Duel Links 自动助手",
+        subtitle: "运行控制、事件任务与日志监控",
+        pause: "暂停",
+        start: "开始决斗",
+        stop: "停止运行",
+        shortcutStart: "F11 启动",
+        shortcutStop: "F12 停止",
+        shortcutPause: "F9 暂停/继续",
+        navDashboard: "控制台",
+        navDuel: "决斗模式",
+        navEvents: "活动任务",
+        navSettings: "设置",
+        navHelp: "帮助",
+        statusLabel: "状态",
+        running: "运行中",
+        worldLabel: "世界",
+        runtimeLabel: "本轮运行",
+        duelMode: "决斗模式",
+        enabled: "已启用",
+        streetDuel: "街头决斗",
+        streetHint: "自动巡回区域并拾取奖励",
+        gateDuel: "传送门决斗",
+        gateHint: "指定次数挑战传奇决斗者",
+        quickConfig: "快速配置",
+        world: "世界",
+        startArea: "起始区域",
+        areaGate: "传送门",
+        areaStreet: "决斗世界",
+        areaShop: "卡片商店",
+        areaStudio: "卡片工作室",
+        logTitle: "运行日志",
+        pausedBadge: "F9 暂停/继续 · F11 启动 · F12 停止",
+        log1: "等待决斗",
+        log2: "检测到 Ashley，34 像素匹配",
+        log3: "读取对话",
+        log4: "机器人已暂停",
+        simpleRunningTitle: "正在自动运行",
+        simpleRunningHint: "为避免误操作，详细配置已收起；按 F12 或点击停止后返回设置界面。",
+        currentTask: "当前任务",
+        lastAction: "最近动作",
+        automation: "自动化",
+        loopArea: "循环区域",
+        loopHint: "清空后继续下一轮",
+        autoOrb: "自动使用决斗珠",
+        orbHint: "标准决斗者耗尽后触发",
+        checkGems: "检查宝石",
+        gemsHint: "巡回时扫描场景奖励",
+        inputControl: "输入控制",
+        mouseControl: "会接管鼠标",
+        inputControlHint: "运行期间会移动并点击鼠标来操作游戏窗口；需要立即停止时按 F12。",
+        events: "活动任务",
+        battleCity: "Battle City Showdown",
+        battleHint: "抽卡、Devine Trial、路线推进",
+        tagDuel: "Tag Duel",
+        tagHint: "可作为独立任务启动",
+        savePreset: "保存预设",
+        runNow: "立即运行"
+      },
+      en: {
+        title: "Duel Links Bot Console",
+        subtitle: "Run control, event tasks, and live monitoring",
+        pause: "Pause",
+        start: "Start Duel",
+        stop: "Stop Run",
+        shortcutStart: "F11 Start",
+        shortcutStop: "F12 Stop",
+        shortcutPause: "F9 Pause/Resume",
+        navDashboard: "Dashboard",
+        navDuel: "Duel Modes",
+        navEvents: "Events",
+        navSettings: "Settings",
+        navHelp: "Help",
+        statusLabel: "Status",
+        running: "Running",
+        worldLabel: "World",
+        runtimeLabel: "Current Run",
+        duelMode: "Duel Mode",
+        enabled: "Enabled",
+        streetDuel: "Street Duel",
+        streetHint: "Sweep areas and collect rewards",
+        gateDuel: "Gate Duel",
+        gateHint: "Challenge legendary duelists by count",
+        quickConfig: "Quick Config",
+        world: "World",
+        startArea: "Start Area",
+        areaGate: "Gate",
+        areaStreet: "Duel World",
+        areaShop: "Card Shop",
+        areaStudio: "Card Studio",
+        logTitle: "Run Log",
+        pausedBadge: "F9 Pause/Resume · F11 Start · F12 Stop",
+        log1: "Waiting duel",
+        log2: "Ashley detected, 34 pixels matched",
+        log3: "Reading dialogue",
+        log4: "Bot paused",
+        simpleRunningTitle: "Automation Running",
+        simpleRunningHint: "Detailed settings are collapsed to reduce accidental changes. Press F12 or click stop to return.",
+        currentTask: "Current Task",
+        lastAction: "Last Action",
+        automation: "Automation",
+        loopArea: "Loop Areas",
+        loopHint: "Restart sweep after clear",
+        autoOrb: "Auto Use Orb",
+        orbHint: "Trigger when standard duelists run out",
+        checkGems: "Check Gems",
+        gemsHint: "Scan scenery rewards during sweeps",
+        inputControl: "Input Control",
+        mouseControl: "Controls Mouse",
+        inputControlHint: "While running, the bot moves and clicks the mouse to operate the game window. Press F12 to stop immediately.",
+        events: "Event Tasks",
+        battleCity: "Battle City Showdown",
+        battleHint: "Lottery, Devine Trial, route progress",
+        tagDuel: "Tag Duel",
+        tagHint: "Can run as a standalone task",
+        savePreset: "Save Preset",
+        runNow: "Run Now"
+      }
+    };
+
+    const languageSelect = document.querySelector("#languageSelect");
+
+    function setRunning(isRunning) {
+      document.body.classList.toggle("is-running", isRunning);
+    }
+
+    function applyLanguage(language) {
+      document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.dataset.i18n;
+        node.textContent = messages[language][key] || node.textContent;
+      });
+    }
+
+    languageSelect.addEventListener("change", (event) => {
+      applyLanguage(event.target.value);
+    });
+
+    document.querySelectorAll("[data-run-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        setRunning(button.dataset.runAction === "start");
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "F11") {
+        event.preventDefault();
+        setRunning(true);
+      }
+
+      if (event.key === "F12") {
+        event.preventDefault();
+        setRunning(false);
+      }
+    });
+  </script>
+</body>
+</html>

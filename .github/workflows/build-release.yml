@@ -1,0 +1,56 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install AutoIt
+        run: choco install autoit -y
+
+      - name: Build exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+
+          $aut2exe = "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe"
+          if (!(Test-Path $aut2exe)) {
+            throw "Aut2Exe not found at $aut2exe"
+          }
+
+          & $aut2exe /in "gui_dlpc.au3" /out "dist\duel-links-bot.exe" /x64
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item "FastFind.dll" "dist\"
+          Copy-Item "FastFind64.dll" "dist\"
+          Copy-Item "help.txt" "dist\"
+
+          if (Test-Path "README.md") {
+            Copy-Item "README.md" "dist\"
+          }
+
+          Compress-Archive -Path "dist\*" -DestinationPath "duel-links-bot-${{ github.ref_name }}.zip" -Force
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: duel-links-bot-${{ github.ref_name }}
+          path: duel-links-bot-${{ github.ref_name }}.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: duel-links-bot-${{ github.ref_name }}.zip

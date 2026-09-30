@@ -78,6 +78,8 @@ Func gui()
 		GUICtrlCreateTabItem("Hotkey")
 			GUICtrlCreateLabel("F9  : Pause/resume",5,25)
 			GUICtrlCreateLabel("F10: Terminate",5,40)
+			GUICtrlCreateLabel("F11: Start",5,55)
+			GUICtrlCreateLabel("F12: Quick stop",5,70)
 
 		GUICtrlCreateTabItem("Setting")
 			$x = 5
@@ -110,6 +112,8 @@ Func gui()
 
 	HotKeySet("{F9}", "Hot_key")
 	HotKeySet("{F10}", "Hot_key")
+	HotKeySet("{F11}", "Hot_key")
+	HotKeySet("{F12}", "Hot_key")
 
 	GUISetState(@SW_SHOW)
 	While 1
@@ -190,6 +194,13 @@ Func Hot_key()
 		Case "{F10}"
 			Write_log("Bot terminated.")
 			Sleep(1000)
+			Exit
+		Case "{F11}"
+			Write_log("Bot started by hotkey.")
+			duel_bot()
+		Case "{F12}"
+			Write_log("Bot quick stopped.")
+			Sleep(500)
 			Exit
 	EndSwitch
 EndFunc
