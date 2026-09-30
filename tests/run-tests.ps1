@@ -1,0 +1,117 @@
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$failures = New-Object System.Collections.Generic.List[string]
+
+function Assert-True {
+  param(
+    [bool]$Condition,
+    [string]$Message
+  )
+
+  if (-not $Condition) {
+    $failures.Add($Message)
+  }
+}
+
+function Read-RepoFile {
+  param([string]$Path)
+
+  Get-Content -Raw -Path (Join-Path $repoRoot $Path)
+}
+
+function Test-RequiredFiles {
+  $requiredFiles = @(
+    "gui_dlpc.au3",
+    "dlpc.au3",
+    "duelists.au3",
+    "events.au3",
+    "FastFind.au3",
+    "FastFind.dll",
+    "FastFind64.dll",
+    "help.txt",
+    ".github/workflows/build-release.yml"
+  )
+
+  foreach ($file in $requiredFiles) {
+    Assert-True (Test-Path (Join-Path $repoRoot $file)) "Missing required file: $file"
+  }
+}
+
+function Test-AutoItIncludes {
+  $scripts = Get-ChildItem -Path $repoRoot -Filter "*.au3" -File
+
+  foreach ($script in $scripts) {
+    $content = Get-Content -Raw -Path $script.FullName
+    $includes = [regex]::Matches($content, '#include\s+"([^"]+)"') | ForEach-Object { $_.Groups[1].Value }
+
+    foreach ($include in $includes) {
+      Assert-True (Test-Path (Join-Path $repoRoot $include)) "$($script.Name) includes missing local file: $include"
+    }
+  }
+}
+
+function Test-BotControlContract {
+  $gui = Read-RepoFile "gui_dlpc.au3"
+  $core = Read-RepoFile "dlpc.au3"
+
+  Assert-True ($gui -match 'HotKeySet\("\{F9\}",\s*"Hot_key"\)') "F9 pause/resume hotkey is not registered"
+  Assert-True ($gui -match 'HotKeySet\("\{F10\}",\s*"Hot_key"\)') "F10 terminate hotkey is not registered"
+  Assert-True ($gui -match 'HotKeySet\("\{F11\}",\s*"Hot_key"\)') "F11 start hotkey is not registered"
+  Assert-True ($gui -match 'HotKeySet\("\{F12\}",\s*"Hot_key"\)') "F12 quick-stop hotkey is not registered"
+  Assert-True ($gui -match 'Case\s+"\{F11\}"[\s\S]*?duel_bot\(\)') "F11 does not start duel_bot()"
+  Assert-True ($gui -match 'Case\s+"\{F12\}"[\s\S]*?Exit') "F12 does not stop the bot"
+
+  Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
+  Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"
+  Assert-True ($core -match 'MouseMove\(') "MouseMove() is missing from the input-control path"
+}
+
+function Test-ReleaseWorkflowContract {
+  $workflow = Read-RepoFile ".github/workflows/build-release.yml"
+
+  Assert-True ($workflow -match 'tags:\s*\r?\n\s*-\s+"v\*"') "Release workflow is not triggered by v* tags"
+  Assert-True ($workflow -match 'tests/run-tests\.ps1') "Release workflow does not run tests before packaging"
+  Assert-True ($workflow -match 'gui_dlpc\.au3') "Release workflow does not compile the GUI entrypoint"
+  Assert-True ($workflow -match 'FastFind\.dll') "Release package does not include FastFind.dll"
+  Assert-True ($workflow -match 'FastFind64\.dll') "Release package does not include FastFind64.dll"
+  Assert-True ($workflow -match 'softprops/action-gh-release@v2') "Release workflow does not publish a GitHub Release"
+}
+
+function Test-ModernUiContract {
+  $mockupPath = Join-Path $repoRoot "modern-ui-mockup.html"
+
+  if (-not (Test-Path $mockupPath)) {
+    return
+  }
+
+  $html = Get-Content -Raw -Path $mockupPath
+  $i18nKeys = [regex]::Matches($html, 'data-i18n="([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+
+  foreach ($key in $i18nKeys) {
+    Assert-True ($html -match ([regex]::Escape($key) + ':')) "Modern UI i18n key has no translation entry: $key"
+  }
+
+  Assert-True ($html -match 'simple-runner') "Modern UI simple running mode is missing"
+  Assert-True ($html -match 'data-run-action="start"') "Modern UI start action is missing"
+  Assert-True ($html -match 'data-run-action="stop"') "Modern UI stop action is missing"
+  Assert-True ($html -match 'event\.key\s*===\s*"F11"') "Modern UI F11 shortcut handling is missing"
+  Assert-True ($html -match 'event\.key\s*===\s*"F12"') "Modern UI F12 shortcut handling is missing"
+}
+
+Test-RequiredFiles
+Test-AutoItIncludes
+Test-BotControlContract
+Test-ReleaseWorkflowContract
+Test-ModernUiContract
+
+if ($failures.Count -gt 0) {
+  Write-Host "Tests failed:" -ForegroundColor Red
+  foreach ($failure in $failures) {
+    Write-Host "- $failure" -ForegroundColor Red
+  }
+  exit 1
+}
+
+Write-Host "All tests passed." -ForegroundColor Green
