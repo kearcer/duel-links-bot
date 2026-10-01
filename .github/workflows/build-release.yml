@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run tests
         shell: pwsh
@@ -29,14 +29,20 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
 
-          $aut2exe = "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe"
-          if (!(Test-Path -LiteralPath $aut2exe)) {
-            throw "Aut2Exe not found at $aut2exe"
+          $compilerCandidates = @(
+            "C:\Program Files\AutoIt3\Aut2Exe\Aut2exe_x64.exe",
+            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe_x64.exe",
+            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe"
+          )
+          $aut2exe = $compilerCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+          if (!$aut2exe) {
+            throw "Aut2Exe compiler was not found"
           }
+          Write-Host "Using AutoIt compiler: $aut2exe"
 
           $input = Join-Path (Get-Location) "gui_dlpc.au3"
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
-          $arguments = @('/in', $input, '/out', $output, '/x64', '/nopack')
+          $arguments = @('/in', $input, '/out', $output, '/x64', '/comp', '0', '/nopack')
           $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -PassThru -NoNewWindow
           if (!$process.WaitForExit(120000)) {
             Stop-Process -Id $process.Id -Force
