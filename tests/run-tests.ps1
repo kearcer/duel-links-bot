@@ -67,6 +67,12 @@ function Test-BotControlContract {
   Assert-True ($gui -match 'Func\s+Apply_language\(') "Native GUI language apply function is missing"
   Assert-True ($gui -match 'Case\s+\$cLanguage[\s\S]*?Apply_language\(\)') "Native GUI language selector does not apply translations"
   Assert-True ($gui -match 'Case\s+\$but_stop[\s\S]*?Exit') "Native GUI stop button does not stop the bot"
+  Assert-True ($gui -match 'Case\s+"helpText"') "Native GUI help text is not localized"
+  Assert-True ($gui -match 'GUICtrlSetData\(\$lHelp,\s*Tr\("helpText"\)\)') "Native GUI help tab does not apply localized help text"
+  Assert-True ($gui -match 'Case\s+"battleCity"[\s\S]*?Return\s+"战斗城市"') "Native GUI Battle City label is not localized"
+
+	Assert-True ($gui -match 'Global\s+\$LogFile') "File log path is missing"
+	Assert-True ($gui -match 'FileWrite\(\$LogFile,\s*\$line') "GUI logs are not written to a file"
 
   Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
   Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"

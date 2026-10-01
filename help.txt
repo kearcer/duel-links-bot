@@ -1,12 +1,11 @@
 https://github.com/ftuyama/duel-links-bot
 
-- All bot function assume you are in street area
-- If bot stuck just press F10 and if you want pause the
- bot press F9 and press it again to continue
+- 所有自动化功能默认从街头区域开始使用。
+- 如果机器人卡住，按 F10 终止。需要暂停时按 F9，再按一次继续。
 
-Street Duel
-- Loop area: Bot will back to Gate Area after Studio Area
+街头决斗
+- 循环区域：到达工作室区域后会返回传送门区域继续。
 
-Set right resolution to make it work
-Windows:    1366x768, scale 100%
-Duel Links: 1280x720 (Alt + enter to toggle window mode)
+请设置正确分辨率以保证识别和点击准确：
+Windows：1366x768，缩放 100%
+Duel Links：1280x720（Alt + Enter 切换窗口模式）

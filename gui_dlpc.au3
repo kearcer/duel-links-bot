@@ -14,6 +14,8 @@ Global $duel_mode = 0
 Global $coin = 1000
 Global $OnTop = True
 Global $Language = "zh"
+Global $lHelp = 0
+Global $LogFile = @ScriptDir & "\duel-links-bot.log"
 
 ;---------------------------- Start GUI --------------------------
 gui()
@@ -43,7 +45,7 @@ Func gui()
 	Global $mainTab = GUICtrlCreateTab(12, 62, 696, 430)
 		Global $tabBot = GUICtrlCreateTabItem("Bot")
 			Global $log  = GUICtrlCreateEdit("",24, 98, 342, 330)
-				write_log("Ready. Make sure you are already logged in.")
+				write_log(Tr("readyLog"))
 
 			Local $x = 382
 			Local $y= 104
@@ -112,14 +114,8 @@ Func gui()
 			Global $grpGateSetting = GUICtrlCreateGroup("Gate Duel",$x, $y+145,240,55)
 				GUIStartGroup()
 
-		Global $tabHelp = GUICtrlCreateTabItem("Help")
-			Local $nHelp = "\help.txt"
-			Local $hFileOpen = FileOpen(@ScriptDir & $nHelp)
-			If $hFileOpen = -1 Then
-				MsgBox($MB_SYSTEMMODAL, "", "An error occurred when reading " & $nHelp)
-			Else
-				Local $lHelp = GUICtrlCreateLabel(FileRead($hFileOpen),24,100,650,330,0x0000)
-			EndIf
+			Global $tabHelp = GUICtrlCreateTabItem("Help")
+				Global $lHelp = GUICtrlCreateLabel("",24,100,650,330,0x0000)
 	GUICtrlCreateTabItem("")
 	Apply_language()
 
@@ -157,8 +153,9 @@ Func gui()
 EndFunc
 
 Func write_log($variable)
-	$variable = $variable & @CRLF
-	_GUICtrlEdit_AppendText($log,$variable)
+	Local $line = @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & ":" & @MIN & ":" & @SEC & " " & $variable
+	_GUICtrlEdit_AppendText($log, $line & @CRLF)
+	FileWrite($LogFile, $line & @CRLF)
 EndFunc
 
 Func duel_bot()
@@ -235,14 +232,16 @@ Func Tr($key)
 			If $Language == "zh" Then Return "活动任务"
 			Return "Event Tasks"
 		Case "battleCity"
+			If $Language == "zh" Then Return "战斗城市"
 			Return "Battle City"
 		Case "devineTrial"
-			If $Language == "zh" Then Return "Devine trial"
+			If $Language == "zh" Then Return "神之试炼"
 			Return "Devine trial"
 		Case "cardLottery"
 			If $Language == "zh" Then Return "卡片抽奖"
 			Return "Card Lottery"
 		Case "tagDuel"
+			If $Language == "zh" Then Return "组队决斗"
 			Return "Tag Duel"
 		Case "inputControl"
 			If $Language == "zh" Then Return "输入控制"
@@ -250,6 +249,9 @@ Func Tr($key)
 		Case "inputHint"
 			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口。"
 			Return "This bot moves and clicks your mouse while running."
+		Case "readyLog"
+			If $Language == "zh" Then Return "就绪。请确认已经登录游戏。"
+			Return "Ready. Make sure you are already logged in."
 		Case "start"
 			If $Language == "zh" Then Return "开始决斗"
 			Return "Start Duel"
@@ -289,6 +291,23 @@ Func Tr($key)
 		Case "gateSetting"
 			If $Language == "zh" Then Return "传送门决斗"
 			Return "Gate Duel"
+		Case "helpText"
+			If $Language == "zh" Then Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
+				"- 所有自动化功能默认从街头区域开始使用。" & @CRLF & _
+				"- 如果机器人卡住，按 F10 终止。需要暂停时按 F9，再按一次继续。" & @CRLF & @CRLF & _
+				"街头决斗" & @CRLF & _
+				"- 循环区域：到达工作室区域后会返回传送门区域继续。" & @CRLF & @CRLF & _
+				"请设置正确分辨率以保证识别和点击准确：" & @CRLF & _
+				"Windows：1366x768，缩放 100%" & @CRLF & _
+				"Duel Links：1280x720（Alt + Enter 切换窗口模式）"
+			Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
+				"- All bot functions assume you are in the street area." & @CRLF & _
+				"- If the bot gets stuck, press F10 to terminate it. Press F9 to pause and press it again to continue." & @CRLF & @CRLF & _
+				"Street Duel" & @CRLF & _
+				"- Loop area: the bot returns to the Gate Area after the Studio Area." & @CRLF & @CRLF & _
+				"Set the correct resolution to make it work:" & @CRLF & _
+				"Windows:    1366x768, scale 100%" & @CRLF & _
+				"Duel Links: 1280x720 (Alt + Enter toggles window mode)"
 	EndSwitch
 	Return $key
 EndFunc
@@ -340,6 +359,7 @@ Func Apply_language()
 	GUICtrlSetData($cOrb, Tr("autoOrb"))
 	GUICtrlSetData($cGem, Tr("checkGems"))
 	GUICtrlSetData($grpGateSetting, Tr("gateSetting"))
+	GUICtrlSetData($lHelp, Tr("helpText"))
 	Set_status(WinExists($title))
 EndFunc
 
