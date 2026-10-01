@@ -29,11 +29,22 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
 
           $aut2exe = "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe"
-          if (!(Test-Path $aut2exe)) {
+          if (!(Test-Path -LiteralPath $aut2exe)) {
             throw "Aut2Exe not found at $aut2exe"
           }
 
-          & $aut2exe /in "gui_dlpc.au3" /out "dist\duel-links-bot.exe" /x64
+          $input = Join-Path (Get-Location) "gui_dlpc.au3"
+          $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
+          $arguments = @("/in", $input, "/out", $output, "/x64")
+          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+          if ($process.ExitCode -ne 0) {
+            throw "Aut2Exe failed with exit code $($process.ExitCode)"
+          }
+          if (!(Test-Path -LiteralPath $output)) {
+            Get-ChildItem -LiteralPath (Join-Path (Get-Location) "dist") -Force
+            throw "Aut2Exe completed but did not create $output"
+          }
+          Get-Item -LiteralPath $output
 
       - name: Package
         shell: pwsh
