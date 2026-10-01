@@ -95,11 +95,11 @@ function Test-ReleaseWorkflowContract {
   Assert-True ($workflow -match 'FastFind\.dll') "Release package does not include FastFind.dll"
   Assert-True ($workflow -match 'FastFind64\.dll') "Release package does not include FastFind64.dll"
   Assert-True ($workflow -match 'softprops/action-gh-release@v2') "Release workflow does not publish a GitHub Release"
+  Assert-True ($workflow -match 'SciTE4AutoIt3\.exe') "Release workflow does not install SciTE4AutoIt3"
   Assert-True ($workflow -match 'AutoIt3Wrapper') "Release workflow does not use AutoIt3Wrapper"
   Assert-True ($workflow -match '/NoStatus') "Release wrapper build does not disable status UI"
   Assert-True ($workflow -match '/prod') "Release wrapper build is not in production mode"
   Assert-True ($workflow -match 'timeout-minutes:\s*10') "Release job has a bounded timeout"
-  Assert-True ($workflow -match 'AutoIt3Wrapper') "Release workflow does not use AutoIt3Wrapper"
 }
 
 function Test-ModernUiContract {

@@ -21,7 +21,7 @@ jobs:
         shell: pwsh
         run: ./tests/run-tests.ps1
 
-      - name: Install AutoIt
+      - name: Install AutoIt tools
         shell: pwsh
         run: |
           $installer = Join-Path (Get-Location) "autoit-setup.exe"
@@ -30,16 +30,25 @@ jobs:
           if ($install.ExitCode -ne 0) {
             throw "AutoIt installer failed with exit code $($install.ExitCode)"
           }
-          Start-Sleep -Seconds 5
           Remove-Item -LiteralPath $installer -Force
+
+          $sciteInstaller = Join-Path (Get-Location) "scite-setup.exe"
+          Invoke-WebRequest -Uri "https://www.autoitscript.com/cgi-bin/getfile.pl?../autoit3/scite/download/SciTE4AutoIt3.exe" -OutFile $sciteInstaller
+          $sciteInstall = Start-Process -FilePath $sciteInstaller -ArgumentList "/S" -Wait -PassThru
+          if ($sciteInstall.ExitCode -ne 0) {
+            throw "SciTE4AutoIt3 installer failed with exit code $($sciteInstall.ExitCode)"
+          }
+          Start-Sleep -Seconds 5
+          Remove-Item -LiteralPath $sciteInstaller -Force
 
       - name: Build exe
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
 
-          $autoit = Join-Path ${env:ProgramFiles(x86)} "AutoIt3\AutoIt3.exe"
-          $wrapper = Join-Path ${env:ProgramFiles(x86)} "AutoIt3\SciTE\AutoIt3Wrapper\AutoIt3Wrapper.au3"
+          $programFiles = ${env:ProgramFiles(x86)}
+          $autoit = Join-Path $programFiles "AutoIt3\AutoIt3.exe"
+          $wrapper = Join-Path $programFiles "AutoIt3\SciTE\AutoIt3Wrapper\AutoIt3Wrapper.au3"
           if (!(Test-Path -LiteralPath $autoit) -or !(Test-Path -LiteralPath $wrapper)) {
             throw "AutoIt3 or AutoIt3Wrapper was not found"
           }
