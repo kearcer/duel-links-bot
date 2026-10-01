@@ -95,11 +95,13 @@ function Test-ReleaseWorkflowContract {
   Assert-True ($workflow -match 'FastFind\.dll') "Release package does not include FastFind.dll"
   Assert-True ($workflow -match 'FastFind64\.dll') "Release package does not include FastFind64.dll"
   Assert-True ($workflow -match 'softprops/action-gh-release@v2') "Release workflow does not publish a GitHub Release"
-  Assert-True ($workflow -match 'Aut2exe_x64\.exe') "Release workflow does not prefer the 64-bit AutoIt compiler"
-  Assert-True ($workflow -match '/comp' -and $workflow -match "'0'") "Release compiler does not disable script compression"
+  Assert-True ($workflow -match 'Aut2exe\.exe') "Release workflow does not use the standard AutoIt compiler"
+  Assert-True ($workflow -match '/x86') "Release workflow does not use the 32-bit compiler"
   Assert-True ($workflow -match '/nopack') "Release compiler disables post-build packing"
   Assert-True ($workflow -match 'timeout-minutes:\s*10') "Release job has a bounded timeout"
-  Assert-True ($workflow -match 'WaitForExit\(120000\)') "AutoIt compiler has a bounded wait"
+  Assert-True ($workflow -match 'RedirectStandardOutput') "Release workflow does not capture compiler output"
+  Assert-True ($workflow -match 'RedirectStandardError') "Release workflow does not capture compiler errors"
+  Assert-True ($workflow -match 'WorkingDirectory') "Release compiler does not set the repository working directory"
 }
 
 function Test-ModernUiContract {

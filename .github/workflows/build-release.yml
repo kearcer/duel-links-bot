@@ -30,9 +30,8 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
 
           $compilerCandidates = @(
-            "C:\Program Files\AutoIt3\Aut2Exe\Aut2exe_x64.exe",
-            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe_x64.exe",
-            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe"
+            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe",
+            "C:\Program Files\AutoIt3\Aut2Exe\Aut2exe.exe"
           )
           $aut2exe = $compilerCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
           if (!$aut2exe) {
@@ -42,12 +41,22 @@ jobs:
 
           $input = Join-Path (Get-Location) "gui_dlpc.au3"
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
-          $arguments = @('/in', $input, '/out', $output, '/x64', '/comp', '0', '/nopack')
-          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -PassThru -NoNewWindow
-          if (!$process.WaitForExit(120000)) {
+          $stdoutFile = Join-Path (Get-Location) "dist\aut2exe.stdout.log"
+          $stderrFile = Join-Path (Get-Location) "dist\aut2exe.stderr.log"
+          $arguments = @('/in', $input, '/out', $output, '/x86', '/nopack')
+          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -WorkingDirectory (Get-Location) -PassThru -NoNewWindow -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
+          $deadline = [DateTime]::UtcNow.AddSeconds(120)
+          while (!$process.HasExited -and [DateTime]::UtcNow -lt $deadline) {
+            Start-Sleep -Seconds 2
+          }
+          if (!$process.HasExited) {
             Stop-Process -Id $process.Id -Force
+            Get-Content -LiteralPath $stdoutFile -ErrorAction SilentlyContinue
+            Get-Content -LiteralPath $stderrFile -ErrorAction SilentlyContinue
             throw "Aut2Exe timed out after 120 seconds"
           }
+          Get-Content -LiteralPath $stdoutFile -ErrorAction SilentlyContinue
+          Get-Content -LiteralPath $stderrFile -ErrorAction SilentlyContinue
           if ($process.ExitCode -ne 0) {
             throw "Aut2Exe failed with exit code $($process.ExitCode)"
           }
