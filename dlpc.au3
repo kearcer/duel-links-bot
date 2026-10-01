@@ -507,8 +507,7 @@ Func Save_area_debug_snapshot()
 	FFSaveJPG($DebugAreaShot, 85, False, 372, 650, 914, 720, 2)
 	Write_log("Area debug screenshots saved to " & $DebugDir)
 EndFunc
-
-
+Func initial_screen()
 	Local $initial_screen_pixels[26][3] = [[441, 121, 0xE20011], [455, 121, 0xEE0011], [446, 150, 0xD70000], [447, 170, 0xDD0000], [486, 193, 0xEE0011], [502, 158, 0xFFFFFF], [491, 126, 0xFFFFFF], [500, 137, 0xFFFFFF], [513, 128, 0xFFFFFF], [522, 108, 0x333333], [530, 146, 0xFFFFFF], [559, 151, 0xFFFFFF], [597, 129, 0xFFFFFF], [612, 165, 0xFFFFFF], [641, 147, 0xFFFFFF], [663, 133, 0xFFFFFF], [661, 115, 0xFFFFFF], [686, 97, 0xEE0011], [697, 172, 0xEE0011], [709, 156, 0xFFFFFF], [741, 142, 0xFFFFFF], [767, 125, 0xFFFFFF], [797, 150, 0xFFFFFF], [790, 104, 0xDE0011], [778, 73, 0xE7E7E7], [778, 84, 0xEE0011]]
 
 	Return Compare_pixels($initial_screen_pixels)

@@ -75,6 +75,9 @@ function Test-BotControlContract {
 	Assert-True ($gui -match 'FileWrite\(\$LogFile,\s*\$line') "GUI logs are not written to a file"
 
   Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
+  Assert-True ($core -match 'Func\s+initial_screen\(') "initial_screen() wrapper is missing"
+  Assert-True ($core -match 'Func\s+get_active_tab_by_blue_score\(') "Adaptive blue-score area detection is missing"
+  Assert-True ($core -match 'Func\s+Save_area_debug_snapshot\(') "Area debug screenshot helper is missing"
   Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"
   Assert-True ($core -match 'MouseMove\(') "MouseMove() is missing from the input-control path"
 }
