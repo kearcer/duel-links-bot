@@ -197,10 +197,10 @@ Func Tr($key)
 			If $Language == "zh" Then Return "运行控制、活动任务与日志监控"
 			Return "Run control, event tasks, and logs"
 		Case "bot"
-			If $Language == "zh" Then Return "控制�?
+			If $Language == "zh" Then Return "控制台"
 			Return "Bot"
 		Case "hotkey"
-			If $Language == "zh" Then Return "快捷�?
+			If $Language == "zh" Then Return "快捷键"
 			Return "Hotkey"
 		Case "setting"
 			If $Language == "zh" Then Return "设置"
@@ -209,13 +209,13 @@ Func Tr($key)
 			If $Language == "zh" Then Return "帮助"
 			Return "Help"
 		Case "status"
-			If $Language == "zh" Then Return "状�?
+			If $Language == "zh" Then Return "状态"
 			Return "Status"
 		Case "running"
-			If $Language == "zh" Then Return "游戏状态：运行�?
+			If $Language == "zh" Then Return "游戏状态：运行中"
 			Return "Duel Links: Running"
 		Case "stopped"
-			If $Language == "zh" Then Return "游戏状态：已停�?
+			If $Language == "zh" Then Return "游戏状态：已停止"
 			Return "Duel Links: Stopped"
 		Case "hotkeyHint"
 			If $Language == "zh" Then Return "F11 启动   F12 停止"
@@ -251,13 +251,13 @@ Func Tr($key)
 			If $Language == "zh" Then Return "输入控制"
 			Return "Input Control"
 		Case "inputHint"
-			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口�?
+			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口。"
 			Return "This bot moves and clicks your mouse while running."
 		Case "readyLog"
-			If $Language == "zh" Then Return "就绪。请确认已经登录游戏�?
+			If $Language == "zh" Then Return "就绪。请确认已经登录游戏。"
 			Return "Ready. Make sure you are already logged in."
 		Case "start"
-			If $Language == "zh" Then Return "开始决�?
+			If $Language == "zh" Then Return "开始决斗"
 			Return "Start Duel"
 		Case "stop"
 			If $Language == "zh" Then Return "停止"
@@ -272,7 +272,7 @@ Func Tr($key)
 			If $Language == "zh" Then Return "F11: 启动"
 			Return "F11: Start"
 		Case "stopHotkey"
-			If $Language == "zh" Then Return "F12: 快速停�?
+			If $Language == "zh" Then Return "F12: 快速停止"
 			Return "F12: Quick stop"
 		Case "general"
 			If $Language == "zh" Then Return "通用"
@@ -290,20 +290,20 @@ Func Tr($key)
 			If $Language == "zh" Then Return "自动使用珠子"
 			Return "Auto use orb"
 		Case "checkGems"
-			If $Language == "zh" Then Return "检查宝�?
+			If $Language == "zh" Then Return "检查宝石"
 			Return "Check for gems"
 		Case "gateSetting"
 			If $Language == "zh" Then Return "传送门决斗"
 			Return "Gate Duel"
 		Case "helpText"
 			If $Language == "zh" Then Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
-				"- 所有自动化功能默认从街头区域开始使用�? & @CRLF & _
-				"- 如果机器人卡住，�?F10 终止。需要暂停时�?F9，再按一次继续�? & @CRLF & @CRLF & _
+				"- 所有自动化功能默认从街头区域开始使用。" & @CRLF & _
+				"- 如果机器人卡住，按 F10 终止。需要暂停时按 F9，再按一次继续。" & @CRLF & @CRLF & _
 				"街头决斗" & @CRLF & _
-				"- 循环区域：到达工作室区域后会返回传送门区域继续�? & @CRLF & @CRLF & _
-				"请设置正确分辨率以保证识别和点击准确�? & @CRLF & _
-				"Windows�?366x768，缩�?100%" & @CRLF & _
-				"Duel Links�?280x720（Alt + Enter 切换窗口模式�?
+				"- 循环区域：到达工作室区域后会返回传送门区域继续。" & @CRLF & @CRLF & _
+				"请设置正确分辨率以保证识别和点击准确：" & @CRLF & _
+				"Windows：1366x768，缩放 100%" & @CRLF & _
+				"Duel Links：1280x720（Alt + Enter 切换窗口模式）"
 			Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
 				"- All bot functions assume you are in the street area." & @CRLF & _
 				"- If the bot gets stuck, press F10 to terminate it. Press F9 to pause and press it again to continue." & @CRLF & @CRLF & _
