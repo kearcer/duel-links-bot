@@ -6,6 +6,9 @@
 #include "events.au3"
 
 Global $title = "[TITLE:Yu-Gi-Oh! DUEL LINKS]"
+Global $DebugDir = @ScriptDir & "\debug"
+Global $DebugScreenShot = $DebugDir & "\last-area-failure-screen"
+Global $DebugAreaShot = $DebugDir & "\last-area-failure-tabs"
 Global $world = 0
 Global $timer = TimerInit()
 Global $Loop  = True
@@ -365,13 +368,14 @@ EndFunc   ;==>AddExcludedArea
 	4:Initial Screen
 #ce
 Func get_area($force)
-	; If gems balance is visible, check which tab is active
-	If Has_gems_balance_visible() Then
-		$active_tab = get_active_tab()
+	Local $active_tab = get_active_tab()
+	If $active_tab <> -1 Then
+		Return $active_tab
+	EndIf
 
-		If $active_tab <> - 1 Then
-			Return $active_tab
-		EndIf
+	; Keep the old gems check as a diagnostic, but do not require it because newer UI colors can differ.
+	If Has_gems_balance_visible() Then
+		Write_log("Gems balance is visible, but active tab was not detected.")
 	EndIf
 
 	; Check if we are in the initial screen
@@ -412,8 +416,8 @@ EndFunc   ;==>get_area
 #ce
 Func get_active_tab()
 	; Screenshot screen
-	SnapShot(372, 698, 914, 745)
-	; Use two points colors to identify active tab
+	SnapShot(372, 650, 914, 720)
+	; Use old exact-color matching first for compatibility with the original UI.
 	Local $pos1 = FFBestSpot(7, 4, 9, 655 + $winPos[0], 721 + $winPos[1], 0x001AFF, 10, False)
 	Local $pos2 = FFBestSpot(7, 4, 9, 655 + $winPos[0], 721 + $winPos[1], 0x0012FF, 10, False)
 
@@ -430,10 +434,81 @@ Func get_active_tab()
 		EndIf
 	EndIf
 
+	Local $area = get_active_tab_by_blue_score()
+	If $area <> -1 Then
+		Return $area
+	EndIf
+
+	Save_area_debug_snapshot()
 	Return -1
 EndFunc
 
-Func initial_screen()
+Func get_active_tab_by_blue_score()
+	Local $scores[4] = [0, 0, 0, 0]
+	Local $xStarts[4] = [392, 519, 647, 764]
+	Local $xEnds[4] = [500, 634, 741, 914]
+	Local $winPosNow = WinGetPos($title)
+	Local $screenWidth = @DesktopWidth
+	Local $screenHeight = @DesktopHeight
+	Local $xOffset = 0
+	Local $yOffset = 0
+
+	; When FastFind is attached to the desktop, center the 1280x720 game canvas.
+	If IsArray($winPosNow) Then
+		If $winPosNow[2] >= $screenWidth And $winPosNow[3] >= $screenHeight Then
+			$xOffset = Int(($screenWidth - 1280) / 2)
+			$yOffset = Int(($screenHeight - 720) / 2)
+		EndIf
+	EndIf
+
+	FFSnapShot(0, 0, 0, 0, 1)
+	For $area = 0 To 3
+		For $x = $xStarts[$area] + $xOffset To $xEnds[$area] + $xOffset Step 2
+			For $y = 650 + $yOffset To 719 + $yOffset Step 2
+				Local $color = FFGetPixel($x, $y, 1)
+				If Is_blue_ui_pixel($color) Then
+					$scores[$area] += 1
+				EndIf
+			Next
+		Next
+	Next
+
+	Local $bestArea = -1
+	Local $bestScore = 0
+	Local $secondScore = 0
+	For $area = 0 To 3
+		If $scores[$area] > $bestScore Then
+			$secondScore = $bestScore
+			$bestScore = $scores[$area]
+			$bestArea = $area
+		ElseIf $scores[$area] > $secondScore Then
+			$secondScore = $scores[$area]
+		EndIf
+	Next
+
+	Write_log("Tab blue scores: " & $scores[0] & "," & $scores[1] & "," & $scores[2] & "," & $scores[3] & " offsets=" & $xOffset & "," & $yOffset)
+	If $bestScore >= 8 And $bestScore >= ($secondScore * 2) Then
+		Return $bestArea
+	EndIf
+	Return -1
+EndFunc
+
+Func Is_blue_ui_pixel($color)
+	Local $red = BitAND(BitShift($color, 16), 0xFF)
+	Local $green = BitAND(BitShift($color, 8), 0xFF)
+	Local $blue = BitAND($color, 0xFF)
+	Return $blue > 150 And $blue > ($red * 1.8) And $blue > ($green * 1.4)
+EndFunc
+
+Func Save_area_debug_snapshot()
+	DirCreate($DebugDir)
+	FFSaveJPG($DebugScreenShot, 85, False, 0, 0, 0, 0, 1)
+	FFSnapShot(372, 650, 914, 720, 2)
+	FFSaveJPG($DebugAreaShot, 85, False, 372, 650, 914, 720, 2)
+	Write_log("Area debug screenshots saved to " & $DebugDir)
+EndFunc
+
+
 	Local $initial_screen_pixels[26][3] = [[441, 121, 0xE20011], [455, 121, 0xEE0011], [446, 150, 0xD70000], [447, 170, 0xDD0000], [486, 193, 0xEE0011], [502, 158, 0xFFFFFF], [491, 126, 0xFFFFFF], [500, 137, 0xFFFFFF], [513, 128, 0xFFFFFF], [522, 108, 0x333333], [530, 146, 0xFFFFFF], [559, 151, 0xFFFFFF], [597, 129, 0xFFFFFF], [612, 165, 0xFFFFFF], [641, 147, 0xFFFFFF], [663, 133, 0xFFFFFF], [661, 115, 0xFFFFFF], [686, 97, 0xEE0011], [697, 172, 0xEE0011], [709, 156, 0xFFFFFF], [741, 142, 0xFFFFFF], [767, 125, 0xFFFFFF], [797, 150, 0xFFFFFF], [790, 104, 0xDE0011], [778, 73, 0xE7E7E7], [778, 84, 0xEE0011]]
 
 	Return Compare_pixels($initial_screen_pixels)
