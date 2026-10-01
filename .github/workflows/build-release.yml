@@ -54,21 +54,28 @@ jobs:
           }
           Write-Host "Using AutoIt3Wrapper: $wrapper"
 
-          $input = Join-Path (Get-Location) "gui_dlpc.au3"
+          $inputName = "gui_dlpc.au3"
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
-          $arguments = @($wrapper, '/NoStatus', '/prod', '/in', $input, '/out', $output)
-          $process = Start-Process -FilePath $autoit -ArgumentList $arguments -WorkingDirectory (Get-Location) -PassThru -NoNewWindow
-          $deadline = [DateTime]::UtcNow.AddSeconds(120)
-          while (!$process.HasExited -and [DateTime]::UtcNow -lt $deadline) {
-            Start-Sleep -Seconds 2
-          }
-          if (!$process.HasExited) {
+          Write-Host "Using AutoIt3Wrapper: $wrapper"
+          Write-Host "Compiling $inputName from $(Get-Location)"
+
+          $argumentLine = "`"$wrapper`" /NoStatus /prod /in $inputName"
+          $process = Start-Process -FilePath $autoit -ArgumentList $argumentLine -WorkingDirectory (Get-Location) -PassThru -NoNewWindow
+          if (!$process.WaitForExit(120000)) {
             Stop-Process -Id $process.Id -Force
             throw "AutoIt3Wrapper timed out after 120 seconds"
           }
           if ($process.ExitCode -ne 0) {
             throw "AutoIt3Wrapper failed with exit code $($process.ExitCode)"
           }
+
+          $compiled = Join-Path (Get-Location) "gui_dlpc.exe"
+          if (!(Test-Path -LiteralPath $compiled)) {
+            Get-ChildItem -LiteralPath (Get-Location) -Filter "*.exe" -Force
+            throw "AutoIt3Wrapper completed but did not create $compiled"
+          }
+          Move-Item -LiteralPath $compiled -Destination $output -Force
+          Get-Item -LiteralPath $output
           if (!(Test-Path -LiteralPath $output)) {
             Get-ChildItem -LiteralPath (Join-Path (Get-Location) "dist") -Force
             throw "Aut2Exe completed but did not create $output"

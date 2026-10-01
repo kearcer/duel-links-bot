@@ -98,6 +98,8 @@ function Test-ReleaseWorkflowContract {
   Assert-True ($workflow -match 'SciTE4AutoIt3\.exe') "Release workflow does not install SciTE4AutoIt3"
   Assert-True ($workflow -match 'AutoIt3Wrapper') "Release workflow does not use AutoIt3Wrapper"
   Assert-True ($workflow -match '/NoStatus') "Release wrapper build does not disable status UI"
+  Assert-True ($workflow -match 'Start-Process -FilePath \$autoit -ArgumentList \$argumentLine') "Release workflow does not invoke AutoIt3Wrapper with a quoted wrapper path"
+  Assert-True ($workflow -match 'gui_dlpc\.exe') "Release workflow does not validate the wrapper default output"
   Assert-True ($workflow -match '/prod') "Release wrapper build is not in production mode"
   Assert-True ($workflow -match 'timeout-minutes:\s*10') "Release job has a bounded timeout"
 }
