@@ -22,7 +22,16 @@ jobs:
         run: ./tests/run-tests.ps1
 
       - name: Install AutoIt
-        run: choco install autoit -y
+        shell: pwsh
+        run: |
+          $installer = Join-Path (Get-Location) "autoit-setup.exe"
+          Invoke-WebRequest -Uri "https://www.autoitscript.com/cgi-bin/getfile.pl?autoit3/autoit-v3-setup.exe" -OutFile $installer
+          $install = Start-Process -FilePath $installer -ArgumentList "/S" -Wait -PassThru
+          if ($install.ExitCode -ne 0) {
+            throw "AutoIt installer failed with exit code $($install.ExitCode)"
+          }
+          Start-Sleep -Seconds 5
+          Remove-Item -LiteralPath $installer -Force
 
       - name: Build exe
         shell: pwsh
@@ -43,7 +52,7 @@ jobs:
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
           $stdoutFile = Join-Path (Get-Location) "dist\aut2exe.stdout.log"
           $stderrFile = Join-Path (Get-Location) "dist\aut2exe.stderr.log"
-          $arguments = @('/in', $input, '/out', $output, '/x86', '/nopack')
+          $arguments = @('/in', $input, '/out', $output, '/nopack')
           $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -WorkingDirectory (Get-Location) -PassThru -NoNewWindow -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
           $deadline = [DateTime]::UtcNow.AddSeconds(120)
           while (!$process.HasExited -and [DateTime]::UtcNow -lt $deadline) {
