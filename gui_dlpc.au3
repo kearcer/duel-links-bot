@@ -118,8 +118,9 @@ Func gui()
 				Global $lHelp = GUICtrlCreateLabel("",24,100,650,330,0x0000)
 	GUICtrlCreateTabItem("")
 	Apply_language()
+	Initialize_game_window()
 
-	HotKeySet("{F9}", "Hot_key")
+		HotKeySet("{F9}", "Hot_key")
 	HotKeySet("{F10}", "Hot_key")
 	HotKeySet("{F11}", "Hot_key")
 	HotKeySet("{F12}", "Hot_key")
@@ -159,6 +160,9 @@ Func write_log($variable)
 EndFunc
 
 Func duel_bot()
+	$StopRequested = False
+	$Loop = _IsChecked($cLoop)
+	If Not Initialize_game_window() Then Return
 	Switch $duel_mode
 		 Case 0
 			Street_duel($world, get_area(1))
@@ -193,10 +197,10 @@ Func Tr($key)
 			If $Language == "zh" Then Return "运行控制、活动任务与日志监控"
 			Return "Run control, event tasks, and logs"
 		Case "bot"
-			If $Language == "zh" Then Return "控制台"
+			If $Language == "zh" Then Return "控制�?
 			Return "Bot"
 		Case "hotkey"
-			If $Language == "zh" Then Return "快捷键"
+			If $Language == "zh" Then Return "快捷�?
 			Return "Hotkey"
 		Case "setting"
 			If $Language == "zh" Then Return "设置"
@@ -205,13 +209,13 @@ Func Tr($key)
 			If $Language == "zh" Then Return "帮助"
 			Return "Help"
 		Case "status"
-			If $Language == "zh" Then Return "状态"
+			If $Language == "zh" Then Return "状�?
 			Return "Status"
 		Case "running"
-			If $Language == "zh" Then Return "游戏状态：运行中"
+			If $Language == "zh" Then Return "游戏状态：运行�?
 			Return "Duel Links: Running"
 		Case "stopped"
-			If $Language == "zh" Then Return "游戏状态：已停止"
+			If $Language == "zh" Then Return "游戏状态：已停�?
 			Return "Duel Links: Stopped"
 		Case "hotkeyHint"
 			If $Language == "zh" Then Return "F11 启动   F12 停止"
@@ -247,13 +251,13 @@ Func Tr($key)
 			If $Language == "zh" Then Return "输入控制"
 			Return "Input Control"
 		Case "inputHint"
-			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口。"
+			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口�?
 			Return "This bot moves and clicks your mouse while running."
 		Case "readyLog"
-			If $Language == "zh" Then Return "就绪。请确认已经登录游戏。"
+			If $Language == "zh" Then Return "就绪。请确认已经登录游戏�?
 			Return "Ready. Make sure you are already logged in."
 		Case "start"
-			If $Language == "zh" Then Return "开始决斗"
+			If $Language == "zh" Then Return "开始决�?
 			Return "Start Duel"
 		Case "stop"
 			If $Language == "zh" Then Return "停止"
@@ -268,7 +272,7 @@ Func Tr($key)
 			If $Language == "zh" Then Return "F11: 启动"
 			Return "F11: Start"
 		Case "stopHotkey"
-			If $Language == "zh" Then Return "F12: 快速停止"
+			If $Language == "zh" Then Return "F12: 快速停�?
 			Return "F12: Quick stop"
 		Case "general"
 			If $Language == "zh" Then Return "通用"
@@ -286,20 +290,20 @@ Func Tr($key)
 			If $Language == "zh" Then Return "自动使用珠子"
 			Return "Auto use orb"
 		Case "checkGems"
-			If $Language == "zh" Then Return "检查宝石"
+			If $Language == "zh" Then Return "检查宝�?
 			Return "Check for gems"
 		Case "gateSetting"
 			If $Language == "zh" Then Return "传送门决斗"
 			Return "Gate Duel"
 		Case "helpText"
 			If $Language == "zh" Then Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
-				"- 所有自动化功能默认从街头区域开始使用。" & @CRLF & _
-				"- 如果机器人卡住，按 F10 终止。需要暂停时按 F9，再按一次继续。" & @CRLF & @CRLF & _
+				"- 所有自动化功能默认从街头区域开始使用�? & @CRLF & _
+				"- 如果机器人卡住，�?F10 终止。需要暂停时�?F9，再按一次继续�? & @CRLF & @CRLF & _
 				"街头决斗" & @CRLF & _
-				"- 循环区域：到达工作室区域后会返回传送门区域继续。" & @CRLF & @CRLF & _
-				"请设置正确分辨率以保证识别和点击准确：" & @CRLF & _
-				"Windows：1366x768，缩放 100%" & @CRLF & _
-				"Duel Links：1280x720（Alt + Enter 切换窗口模式）"
+				"- 循环区域：到达工作室区域后会返回传送门区域继续�? & @CRLF & @CRLF & _
+				"请设置正确分辨率以保证识别和点击准确�? & @CRLF & _
+				"Windows�?366x768，缩�?100%" & @CRLF & _
+				"Duel Links�?280x720（Alt + Enter 切换窗口模式�?
 			Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
 				"- All bot functions assume you are in the street area." & @CRLF & _
 				"- If the bot gets stuck, press F10 to terminate it. Press F9 to pause and press it again to continue." & @CRLF & @CRLF & _
@@ -370,6 +374,7 @@ Func Hot_key()
 			Local $Informed = False
 			While $sPaused
 				Control_gui(GUIGetMsg())
+				If $StopRequested Then ExitLoop
 				$timer = TimerInit()
 				If Not $Informed Then
 					Write_log("Bot Paused.")
@@ -382,15 +387,13 @@ Func Hot_key()
 			EndIf
 		Case "{F10}"
 			Write_log("Bot terminated.")
-			Sleep(1000)
-			Exit
+			Request_stop()
 		Case "{F11}"
 			Write_log("Bot started by hotkey.")
 			duel_bot()
 		Case "{F12}"
 			Write_log("Bot quick stopped.")
-			Sleep(500)
-			Exit
+			Request_stop()
 	EndSwitch
 EndFunc
 
@@ -428,8 +431,7 @@ Func Control_gui($nMsg)
 			   duel_bot()
 			Case $but_stop
 			   Write_log("Bot stopped from UI.")
-			   Sleep(500)
-			   Exit
+			   Request_stop()
 			Case $rad_sd
 			   $duel_mode = 0
 			Case $rad_gd

@@ -9,23 +9,72 @@ Global $title = "[TITLE:Yu-Gi-Oh! DUEL LINKS]"
 Global $DebugDir = @ScriptDir & "\debug"
 Global $DebugScreenShot = $DebugDir & "\last-area-failure-screen"
 Global $DebugAreaShot = $DebugDir & "\last-area-failure-tabs"
+Global $StopRequested = False
+Global $GameHwnd = 0
 Global $world = 0
 Global $timer = TimerInit()
 Global $Loop  = True
 Global $CheckGems = True
 Global $auto_orb_reload = False
 Global $sPaused = False
-$FFWnd = _WinAPI_GetDesktopWindow()
-$winPos = WinGetPos($title)
-FFSetWnd($FFWnd)
+Global $winPos[4] = [0, 0, 0, 0]
+
+Func Initialize_game_window()
+	$GameHwnd = WinGetHandle($title)
+	If $GameHwnd = 0 Then
+		Write_log("Game window not found: " & $title)
+		Return False
+	EndIf
+	$winPos = WinGetPos($GameHwnd)
+	If Not IsArray($winPos) Then
+		Write_log("Game window position unavailable.")
+		Return False
+	EndIf
+	FFSetWnd($GameHwnd)
+	Write_log("Game window bound: handle=" & $GameHwnd & " x=" & $winPos[0] & " y=" & $winPos[1] & " width=" & $winPos[2] & " height=" & $winPos[3])
+	Return True
+EndFunc
+
+Func Refresh_game_window()
+	If $GameHwnd = 0 Or Not WinExists($GameHwnd) Then
+		Return Initialize_game_window()
+	EndIf
+	$winPos = WinGetPos($GameHwnd)
+	If Not IsArray($winPos) Then Return False
+	FFSetWnd($GameHwnd)
+	Return True
+EndFunc
+
+Func Sleep_checked($milliseconds)
+	Local $timer = TimerInit()
+	While TimerDiff($timer) < $milliseconds
+		If Is_stop_requested() Then Return -1
+		Sleep(100)
+	WEnd
+	Return 0
+EndFunc
+
+Func Request_stop()
+	$StopRequested = True
+	$Loop = False
+	$sPaused = False
+	Write_log("Stop requested.")
+EndFunc
+
+Func Is_stop_requested()
+	Control_gui(GUIGetMsg())
+	Return $StopRequested
+EndFunc
 
 #cs
 	Gate duel using the first character that appears
 	; Click(902, 372) ;next legendary duelist
 #ce
 Func Gate_duel($amount)
-   Go_to_area(0)
+   If Is_stop_requested() Then Return
+   If Go_to_area(0) == -1 Then Return
    For $i = 0 To $amount Step 1
+		If Is_stop_requested() Then Return
 		Click(727, 341)
 		Write_log("Click duel gate.")
 		Wait_pixel(626, 743, 0xFFFFFF, 10000, "Legendary Duelist list")
@@ -42,10 +91,13 @@ Duel any steet duelist availbae at $world(0 for Yu-Gi-Oh and 1 for
 	Yu-Gi-Oh GX) starting from $start_area
 #ce
 Func Street_duel($world, $start_area)
+	If Is_stop_requested() Then Return
 	$duelist = Get_duelists($world)
 
 	For $area = $start_area To 3 Step 1
+		If Is_stop_requested() Then Return
 		Do
+			If Is_stop_requested() Then Return
 			Local $hSearch = Search($area, 99)
 			Switch $hSearch
 				Case -1
@@ -63,6 +115,7 @@ Func Street_duel($world, $start_area)
 		Write_log("Area is clear from loot")
 
 		For $char = 0 To UBound($duelist) - 1 Step 1
+			If Is_stop_requested() Then Return
 			Switch Search($area, $duelist[$char])
 				Case -1
 					Return
@@ -181,6 +234,7 @@ _#/|##########/\######(   /\   )######/\##########|\#_
 Lalalalala
 #ce
 Func letsDuel()
+	If Is_stop_requested() Then Return 0
 	Local $massage
 	Local $time_out
 	Local $count = 0
@@ -220,7 +274,9 @@ Func letsDuel()
     $time_out = 300000
 	$timer = TimerInit()
 	While (TimerDiff($timer) < $time_out) And (get_area(0) == -1)
+	   If Is_stop_requested() Then Return 0
 	   While (TimerDiff($timer) < $time_out) And (get_area(0) == -1)
+		   If Is_stop_requested() Then Return 0
 		   Click(644, 708);
 		   vagabond_challange()
 		   $count += 1
@@ -252,11 +308,12 @@ Func CloseDialogue()
 EndFunc  ;==>CloseDialogue
 
 Func WriteTimeout($timer, $time_out)
+	If Is_stop_requested() Then Return
 	If TimerDiff($timer) >= $time_out Then
 		$time_out = 5000
 		Write_log("Time out!")
 		Write_log("Exit in " & $time_out / 1000 & " s")
-		Sleep($time_out)
+		Sleep_checked($time_out)
 		Exit
 	Else
 		Write_log(time_s(TimerDiff($timer)) & " s")
@@ -280,6 +337,7 @@ EndFunc   ;==>vagabond_challange
 	Search $object insinde $area
 #ce
 Func Search($area, $object)
+	If Is_stop_requested() Then Return -1
 	If Go_to_area($area) == -1 Then
 		Return -1
 	EndIf
@@ -304,7 +362,7 @@ Func Search($area, $object)
 EndFunc   ;==>Search
 
 Func Move($x, $y)
-	$winPos = WinGetPos($title)
+	If Not Refresh_game_window() Then Return
 	MouseMove($x + $winPos[0], $y + $winPos[1],0)
 EndFunc   ;==>Move
 
@@ -313,10 +371,9 @@ EndFunc   ;==>Move
 #ce
 Func Click($x, $y)
 	If $x > 372 And $x < 913 And $y > 54 And $y < 749 Then
-		$winPos = WinGetPos($title)
-		ClickOn($x + $winPos[0], $y + $winPos[1], 1)
+		ClickOn($x, $y, 1)
 	Else
-		MsgBox(0, "Error", "What the heck! Don't click outside the game!" + $x + ', ' + $y)
+		Write_log("Blocked out-of-game click at " & $x & ", " & $y)
 	EndIf
 EndFunc   ;==>Click
 
@@ -325,29 +382,28 @@ EndFunc   ;==>Click
 	Wrap MouseClick
 #ce
 Func ClickOn($x, $y, $clicks)
-	$winPos = WinGetPos($title)
-	If $x - $winPos[0] > 372 And $x - $winPos[0] < 913 And $y + $winPos[1] > 54 And $y + $winPos[1] < 749 Then
-		MouseClick($MOUSE_CLICK_LEFT, $x, $y, $clicks)
+	If Not Refresh_game_window() Then Return
+	If $x > 372 And $x < 913 And $y > 54 And $y < 749 Then
+		MouseClick($MOUSE_CLICK_LEFT, $x + $winPos[0], $y + $winPos[1], $clicks)
 	Else
-		MsgBox(0, "Error", "What the heck! Don't click outside the game!" + $x + ', ' + $y)
+		Write_log("Blocked out-of-game click at " & $x & ", " & $y)
 	EndIf
-EndFunc   ;==>Click
+EndFunc   ;==>ClickOn
 
 #cs
 	Take SnapShot of current screen. Refer to FastFind.chm for information
 #ce
 Func SnapShot($x1, $y1, $x2, $y2)
-	$winPos = WinGetPos($title)
-	FFSnapShot($x1 + $winPos[0], $y1 + $winPos[1], $x2 + $winPos[0], $y2 + $winPos[1])
+	Refresh_game_window()
+	FFSnapShot($x1, $y1, $x2, $y2)
 EndFunc   ;==>SnapShot
 
 #cs
 	return color of pixel at ($x,$y)
 #ce
 Func GetPixel($x, $y)
-	FFSnapShot()
-	$winPos = WinGetPos($title)
-	Return FFGetPixel($x + $winPos[0], $y + $winPos[1])
+	SnapShot(0, 0, 0, 0)
+	Return FFGetPixel($x, $y)
 EndFunc   ;==>GetPixel
 
 #cs
@@ -355,8 +411,8 @@ EndFunc   ;==>GetPixel
 	($x1, $y1) and  ($x2, $y2)
 #ce
 Func AddExcludedArea($x1, $y1, $x2, $y2)
-	$winPos = WinGetPos($title)
-	FFAddExcludedArea($x1 + $winPos[0], $y1 + $winPos[1], $x2 + $winPos[0], $y2 + $winPos[1])
+	Refresh_game_window()
+	FFAddExcludedArea($x1, $y1, $x2, $y2)
 EndFunc   ;==>AddExcludedArea
 
 #cs
@@ -418,8 +474,8 @@ Func get_active_tab()
 	; Screenshot screen
 	SnapShot(372, 650, 914, 720)
 	; Use old exact-color matching first for compatibility with the original UI.
-	Local $pos1 = FFBestSpot(7, 4, 9, 655 + $winPos[0], 721 + $winPos[1], 0x001AFF, 10, False)
-	Local $pos2 = FFBestSpot(7, 4, 9, 655 + $winPos[0], 721 + $winPos[1], 0x0012FF, 10, False)
+	Local $pos1 = FFBestSpot(7, 4, 9, 655, 721, 0x001AFF, 10, False)
+	Local $pos2 = FFBestSpot(7, 4, 9, 655, 721, 0x0012FF, 10, False)
 
 	If Not @error Then
 		$area1 = get_identified_area($pos1, $winPos)
@@ -447,18 +503,12 @@ Func get_active_tab_by_blue_score()
 	Local $scores[4] = [0, 0, 0, 0]
 	Local $xStarts[4] = [392, 519, 647, 764]
 	Local $xEnds[4] = [500, 634, 741, 914]
-	Local $winPosNow = WinGetPos($title)
-	Local $screenWidth = @DesktopWidth
-	Local $screenHeight = @DesktopHeight
+	Local $winPosNow = WinGetPos($GameHwnd)
 	Local $xOffset = 0
 	Local $yOffset = 0
 
-	; When FastFind is attached to the desktop, center the 1280x720 game canvas.
 	If IsArray($winPosNow) Then
-		If $winPosNow[2] >= $screenWidth And $winPosNow[3] >= $screenHeight Then
-			$xOffset = Int(($screenWidth - 1280) / 2)
-			$yOffset = Int(($screenHeight - 720) / 2)
-		EndIf
+		$winPos = $winPosNow
 	EndIf
 
 	FFSnapShot(0, 0, 0, 0, 1)
@@ -501,6 +551,7 @@ Func Is_blue_ui_pixel($color)
 EndFunc
 
 Func Save_area_debug_snapshot()
+	If Not Refresh_game_window() Then Return
 	DirCreate($DebugDir)
 	FFSaveJPG($DebugScreenShot, 85, False, 0, 0, 0, 0, 1)
 	FFSnapShot(372, 650, 914, 720, 2)
@@ -531,8 +582,8 @@ EndFunc
 	3:Studio
 #ce
 Func get_identified_area($pos, $winPos)
-	Local $area = 0
-	Switch $pos[0] - $winPos[0]
+	Local $area = -1
+	Switch $pos[0]
 		Case 392 To 500
 			$area = 0
 		Case 519 To 634
@@ -549,7 +600,9 @@ EndFunc   ;==>get_identified_area
 	Go to $des_area
 #ce
 Func Go_to_area($des_area)
+	If Is_stop_requested() Then Return -1
 	Local $cur_area = get_area(1)
+	If Is_stop_requested() Then Return -1
 	If $cur_area <> $des_area Then
 		If $cur_area == -1 Then
 			Return -1
@@ -559,21 +612,21 @@ Func Go_to_area($des_area)
 			Case $des_area = 0
 				Click(463, 722)
 				$massage = "Go to Gate area"
-				Sleep(800)
+				If Sleep_checked(800) = -1 Then Return -1
 			Case $des_area = 1
 				Click(592, 721)
 				$massage = "Go to Duel area"
-				Sleep(800)
+				If Sleep_checked(800) = -1 Then Return -1
 			Case $des_area = 2
 				Click(710, 722)
 				$massage = "Go to Shop area"
-				Sleep(800)
+				If Sleep_checked(800) = -1 Then Return -1
 			Case $des_area = 3
 				Click(835, 722)
 				$massage = "Go to Studio area"
-				Sleep(800)
+				If Sleep_checked(800) = -1 Then Return -1
 		EndSelect
-		Sleep(200)
+		If Sleep_checked(200) = -1 Then Return -1
 		Write_log($massage)
 	EndIf
 EndFunc   ;==>Go_to_area
@@ -582,7 +635,7 @@ EndFunc   ;==>Go_to_area
 	Return 1 if pixel at ($x,$y) is exactly has $color color
 #ce
 Func Compare_pixel($x, $y, $color)
-	$winPos = WinGetPos($title)
+	Refresh_game_window()
 	If GetPixel($x, $y) <> $color Then
 		Return 0
 	Else
@@ -612,6 +665,8 @@ EndFunc   ;==>Compare_pixels
 Func Wait_pixel($x, $y, $color, $time_out, $massage)
 	$timer = TimerInit()
 	While Compare_pixel($x, $y, $color) == 0 And (TimerDiff($timer) < $time_out)
+		If Is_stop_requested() Then Return -1
+		Sleep(100)
 	WEnd
 	If TimerDiff($timer) >= $time_out Then
 		Write_log("Timeout " & $massage)
@@ -681,8 +736,8 @@ EndFunc   ;==>Dbg_excluded
 	Helper function for Dbg_excluded($x,$y,$area)
 #ce
 Func IsExcluded($x, $y)
-	$winPos = WinGetPos($title)
-	Return FFIsExcluded($x + $winPos[0], $y + $winPos[1], $FFWnd)
+	Refresh_game_window()
+	Return FFIsExcluded($x, $y, $GameHwnd)
 EndFunc   ;==>IsExcluded
 
 #cs
