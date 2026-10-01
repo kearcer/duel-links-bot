@@ -38,36 +38,27 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
 
-          $compilerCandidates = @(
-            "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2exe.exe",
-            "C:\Program Files\AutoIt3\Aut2Exe\Aut2exe.exe"
-          )
-          $aut2exe = $compilerCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-          if (!$aut2exe) {
-            throw "Aut2Exe compiler was not found"
+          $autoit = Join-Path ${env:ProgramFiles(x86)} "AutoIt3\AutoIt3.exe"
+          $wrapper = Join-Path ${env:ProgramFiles(x86)} "AutoIt3\SciTE\AutoIt3Wrapper\AutoIt3Wrapper.au3"
+          if (!(Test-Path -LiteralPath $autoit) -or !(Test-Path -LiteralPath $wrapper)) {
+            throw "AutoIt3 or AutoIt3Wrapper was not found"
           }
-          Write-Host "Using AutoIt compiler: $aut2exe"
+          Write-Host "Using AutoIt3Wrapper: $wrapper"
 
           $input = Join-Path (Get-Location) "gui_dlpc.au3"
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
-          $stdoutFile = Join-Path (Get-Location) "dist\aut2exe.stdout.log"
-          $stderrFile = Join-Path (Get-Location) "dist\aut2exe.stderr.log"
-          $arguments = @('/in', $input, '/out', $output, '/nopack')
-          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -WorkingDirectory (Get-Location) -PassThru -NoNewWindow -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
+          $arguments = @($wrapper, '/NoStatus', '/prod', '/in', $input, '/out', $output)
+          $process = Start-Process -FilePath $autoit -ArgumentList $arguments -WorkingDirectory (Get-Location) -PassThru -NoNewWindow
           $deadline = [DateTime]::UtcNow.AddSeconds(120)
           while (!$process.HasExited -and [DateTime]::UtcNow -lt $deadline) {
             Start-Sleep -Seconds 2
           }
           if (!$process.HasExited) {
             Stop-Process -Id $process.Id -Force
-            Get-Content -LiteralPath $stdoutFile -ErrorAction SilentlyContinue
-            Get-Content -LiteralPath $stderrFile -ErrorAction SilentlyContinue
-            throw "Aut2Exe timed out after 120 seconds"
+            throw "AutoIt3Wrapper timed out after 120 seconds"
           }
-          Get-Content -LiteralPath $stdoutFile -ErrorAction SilentlyContinue
-          Get-Content -LiteralPath $stderrFile -ErrorAction SilentlyContinue
           if ($process.ExitCode -ne 0) {
-            throw "Aut2Exe failed with exit code $($process.ExitCode)"
+            throw "AutoIt3Wrapper failed with exit code $($process.ExitCode)"
           }
           if (!(Test-Path -LiteralPath $output)) {
             Get-ChildItem -LiteralPath (Join-Path (Get-Location) "dist") -Force
