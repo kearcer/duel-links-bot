@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -35,8 +36,12 @@ jobs:
 
           $input = Join-Path (Get-Location) "gui_dlpc.au3"
           $output = Join-Path (Get-Location) "dist\duel-links-bot.exe"
-          $arguments = @("/in", $input, "/out", $output, "/x64")
-          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+          $arguments = @('/in', $input, '/out', $output, '/x64', '/nopack')
+          $process = Start-Process -FilePath $aut2exe -ArgumentList $arguments -PassThru -NoNewWindow
+          if (!$process.WaitForExit(120000)) {
+            Stop-Process -Id $process.Id -Force
+            throw "Aut2Exe timed out after 120 seconds"
+          }
           if ($process.ExitCode -ne 0) {
             throw "Aut2Exe failed with exit code $($process.ExitCode)"
           }
