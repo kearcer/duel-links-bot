@@ -80,8 +80,9 @@ function Test-BotControlContract {
   Assert-True ($core -match 'Func\s+Wait_pixel\([\s\S]*?Is_stop_requested\(\)') "Wait_pixel does not honor stop requests"
   Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
   Assert-True ($core -match 'Func\s+initial_screen\(') "initial_screen() wrapper is missing"
-  Assert-True ($core -match 'Func\s+get_active_tab_by_blue_score\(') "Adaptive blue-score area detection is missing"
-  Assert-True ($core -match 'Func\s+Save_area_debug_snapshot\(') "Area debug screenshot helper is missing"
+  Assert-True ($core -match 'SnapShot\(0, 0, 0, 0\)') "Area detection does not capture the full client snapshot"
+  Assert-True ($core -match 'FFBestSpot\(7, 4, 9, 655, 710, 0x001AFF') "Area detection uses an invalid y reference"
+  Assert-True ($core -match 'FFGetPixel\(\$x, \$y, 0\)') "Blue-score detection uses the wrong snapshot slot"
   Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"
   Assert-True ($core -match 'MouseMove\(') "MouseMove() is missing from the input-control path"
 }

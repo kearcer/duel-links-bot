@@ -471,13 +471,14 @@ EndFunc   ;==>get_area
 		Write_log("Area2 " & $area2 & " at " &$pos2[0]&" & "&$pos2[1])
 #ce
 Func get_active_tab()
-	; Screenshot screen
-	SnapShot(372, 650, 914, 720)
+	; Keep the snapshot in full client coordinates. The search reference points below
+	; use the 1280x720 client area, so a cropped snapshot would make y=721 invalid.
+	SnapShot(0, 0, 0, 0)
 	; Use old exact-color matching first for compatibility with the original UI.
-	Local $pos1 = FFBestSpot(7, 4, 9, 655, 721, 0x001AFF, 10, False)
-	Local $pos2 = FFBestSpot(7, 4, 9, 655, 721, 0x0012FF, 10, False)
+	Local $pos1 = FFBestSpot(7, 4, 9, 655, 710, 0x001AFF, 10, False)
+	Local $pos2 = FFBestSpot(7, 4, 9, 655, 710, 0x0012FF, 10, False)
 
-	If Not @error Then
+	If IsArray($pos1) And IsArray($pos2) Then
 		$area1 = get_identified_area($pos1, $winPos)
 		$area2 = get_identified_area($pos2, $winPos)
 
@@ -511,11 +512,11 @@ Func get_active_tab_by_blue_score()
 		$winPos = $winPosNow
 	EndIf
 
-	FFSnapShot(0, 0, 0, 0, 1)
+	; Reuse the full-client snapshot created by get_active_tab().
 	For $area = 0 To 3
 		For $x = $xStarts[$area] + $xOffset To $xEnds[$area] + $xOffset Step 2
 			For $y = 650 + $yOffset To 719 + $yOffset Step 2
-				Local $color = FFGetPixel($x, $y, 1)
+				Local $color = FFGetPixel($x, $y, 0)
 				If Is_blue_ui_pixel($color) Then
 					$scores[$area] += 1
 				EndIf
