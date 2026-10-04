@@ -1,4 +1,4 @@
 
 TRACER\.TXT
 GetColor!.lnk
-*.exe
+dist/

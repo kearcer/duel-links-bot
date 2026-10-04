@@ -84,7 +84,7 @@
 global $FFDefaultSnapShot = 0 	 ; Default SnapShot Nb
 
 
-global $FFDefautDebugMode = 0xE7 ; Si below to the meaning of this value. To remove all debug features (file traces, graphical feedback..., use 0 here)
+global $FFDefautDebugMode = 0 ; Disable FastFind trace/graphic/message-box diagnostics in normal builds
 
 
 ; System global variables ** do not change them **
@@ -271,7 +271,7 @@ EndFunc
 ; Proto C function: int WINAPI SnapShot(int aLeft, int aTop, int aRight, int aBottom, int NoSnapShot)
 Func FFSnapShot(const $Left=0, const $Top=0, const $Right=0, const $Bottom=0, const $NoSnapShot=$FFDefaultSnapShot, const $WindowHandle=-1)
 	if ($WindowHandle <> -1) Then FFSetWnd($WindowHandle)
-	$FFDefaultSnapShot = $NoSnapShot ; On mémorise le no du SnapShot utilisé, cela restera le SnapShop par défaut pour les prochains appels
+	$FFDefaultSnapShot = $NoSnapShot ; On mï¿½morise le no du SnapShot utilisï¿½, cela restera le SnapShop par dï¿½faut pour les prochains appels
 	local $Res = DllCall($FFDllHandle, "int", "SnapShot", "int", $Left, "int", $Top, "int", $Right, "int", $Bottom, "int", $NoSnapShot)
 	If ( ((Not IsArray($Res)) AND ($Res=0)) OR $Res[0]=0) Then
 		MsgBox(0, "FFSnapShot", "SnapShot ("&$Left&","&$Top&","&$Right&","&$Bottom&","&$NoSnapShot&","&Hex($WindowHandle,8)&") failed ")
@@ -292,7 +292,7 @@ EndFunc
 
 ; Internal Function, don't use it directly
 Func SnapShotPreProcessor($Left, $Top, $Right, $Bottom, $ForceNewSnap, $NoSnapShot, $WindowHandle)
-	; Si on impose une nouvelle capture ou si aucun SnapShot valide n'a déjà été effectué pour ce N°
+	; Si on impose une nouvelle capture ou si aucun SnapShot valide n'a dï¿½jï¿½ ï¿½tï¿½ effectuï¿½ pour ce Nï¿½
 	if ($ForceNewSnap OR $FFLastSnapStatus[$NoSnapShot] <> 1) Then return FFSnapShot($Left, $Top, $Right, $Bottom, $NoSnapShot, $WindowHandle)
 	Return True
 EndFunc
@@ -309,7 +309,7 @@ EndFunc
 ;
 ; Proto C function: int WINAPI ColorPixelSearch(int &XRef, int &YRef, int ColorToFind, int NoSnapShot)
 Func FFNearestPixel($PosX, $PosY, $Color, $ForceNewSnap=true, $Left=0, $Top=0, $Right=0, $Bottom=0, $NoSnapShot=$FFLastSnap, $WindowHandle=-1)
- 	;local $NoSnapShot = 2 ; Slot utilisé pour les captures d'écran (entre 0 et 3), choisi arbitrairement
+ 	;local $NoSnapShot = 2 ; Slot utilisï¿½ pour les captures d'ï¿½cran (entre 0 et 3), choisi arbitrairement
 	if Not SnapShotPreProcessor($Left, $Top, $Right, $Bottom, $ForceNewSnap, $NoSnapShot, $WindowHandle) Then
 		SetError(2)
 		Return False
@@ -511,10 +511,10 @@ EndFunc
 ; Change a SnapShot so that it keeps only the pixels that are different from another SnapShot.
 ; modified by frank10
 ; Exemple :
-;   FFSnapShot(0, 0, 0, 0, 1) ; Takes FullScreen SnapShot N°1
+;   FFSnapShot(0, 0, 0, 0, 1) ; Takes FullScreen SnapShot Nï¿½1
 ;   Sleep(1000)				  ; Wait 1 second
-;   FFSnapShot(0, 0, 0, 0, 2) ; Takes another SnapShot (N°2)
-;   FFKeepChanges(1, 2, 8)       ; SnapShot N°1 will have all pixels black, except those that have changed between the 2 SnapShots with a shadevariation of 8. SnapShot N°2 is kept unchanged.
+;   FFSnapShot(0, 0, 0, 0, 2) ; Takes another SnapShot (Nï¿½2)
+;   FFKeepChanges(1, 2, 8)       ; SnapShot Nï¿½1 will have all pixels black, except those that have changed between the 2 SnapShots with a shadevariation of 8. SnapShot Nï¿½2 is kept unchanged.
 ;   FFSaveBMP("snapshot", false, 0,0,0,0, 1) ; Saves the result into snapshot.bmp
 ;
 ;Prototype : int WINAPI KeepChanges(int NoSnapShot, int NoSnapShot2, int ShadeVariation);  // ** Changed in version 2.0 : ShadeVariation added **
@@ -529,15 +529,15 @@ EndFunc
 
 ; Change a SnapShot so that it keeps only the color (or colors if a list is used) asked. All other pixels will be black.
 ; Exemple :
-;   FFSnapShot(0, 0, 0, 0, 1) ; Takes FullScreen SnapShot N°1
+;   FFSnapShot(0, 0, 0, 0, 1) ; Takes FullScreen SnapShot Nï¿½1
 ;   Sleep(1000)				  ; Wait 1 second
-;   FFSnapShot(0, 0, 0, 0, 2) ; Takes another SnapShot (N°2)
-;   FFKeepChanges(1, 2)       ; SnapShot N°1 will have all pixels black, except those that have changed between the 2 SnapShots. SnapShot N°2 is kept unchanged.
+;   FFSnapShot(0, 0, 0, 0, 2) ; Takes another SnapShot (Nï¿½2)
+;   FFKeepChanges(1, 2)       ; SnapShot Nï¿½1 will have all pixels black, except those that have changed between the 2 SnapShots. SnapShot Nï¿½2 is kept unchanged.
 ;   FFResetColors()           ; Rest of the list of colors
 ;   local $Couleurs[2]=[0x00FF0000, 0x000000FF] ; Pure blue and pure red
 ;   FFAddColor($Couleurs)
-;   FFKeepColor(-1, 60, false, 0,0,0,0, 1, -1) ;  As the SnapShot N°1 now has only very few pixels (only changes), we can now make de detection with very high ShadeVariation value
-;                                              ;  After this step, the SnapShot N°1 will only have blue and red pixels left.
+;   FFKeepColor(-1, 60, false, 0,0,0,0, 1, -1) ;  As the SnapShot Nï¿½1 now has only very few pixels (only changes), we can now make de detection with very high ShadeVariation value
+;                                              ;  After this step, the SnapShot Nï¿½1 will only have blue and red pixels left.
 ;Prototype : int WINAPI KeepColor(int NoSnapShot, int ColorToFind, int ShadeVariation);
 Func FFKeepColor($ColorToFind, $ShadeVariation=0, $ForceNewSnap=true, $Left=0, $Top=0, $Right=0, $Bottom=0, $NoSnapShot=$FFLastSnap, $WindowHandle=-1)
 	if Not SnapShotPreProcessor($Left, $Top, $Right, $Bottom, $ForceNewSnap, $NoSnapShot, $WindowHandle) Then

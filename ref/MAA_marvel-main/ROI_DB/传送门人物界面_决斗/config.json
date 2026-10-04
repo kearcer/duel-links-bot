@@ -1,0 +1,20 @@
+{
+  "name": "传送门人物界面_决斗",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 304,
+    "y": 1086,
+    "width": 102,
+    "height": 54
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

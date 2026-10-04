@@ -1,0 +1,20 @@
+{
+  "name": "商店",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 427,
+    "y": 1257,
+    "width": 45,
+    "height": 22
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

@@ -137,7 +137,9 @@ Func gui()
 			WinSetOnTop($hGui,'',  $WINDOWS_NOONTOP)
 		EndIf
 
-		If WinExists($title) Then
+		If $UseAdbBackend Then
+			Set_status(True)
+		ElseIf WinExists($title) Then
 			If $window_status == 0 Then
 				Set_status(True)
 				$window_status = 1
@@ -251,11 +253,11 @@ Func Tr($key)
 			If $Language == "zh" Then Return "输入控制"
 			Return "Input Control"
 		Case "inputHint"
-			If $Language == "zh" Then Return "运行时会移动并点击鼠标来操作游戏窗口。"
-			Return "This bot moves and clicks your mouse while running."
+			If $Language == "zh" Then Return "通过 MuMu 模拟器后台运行，不占用鼠标。"
+			Return "Runs through MuMu in the background without taking over the mouse."
 		Case "readyLog"
-			If $Language == "zh" Then Return "就绪。请确认已经登录游戏。"
-			Return "Ready. Make sure you are already logged in."
+			If $Language == "zh" Then Return "就绪。请启动 MuMu 并登录游戏。"
+			Return "Ready. Start MuMu and log in to the game."
 		Case "start"
 			If $Language == "zh" Then Return "开始决斗"
 			Return "Start Duel"
@@ -296,27 +298,27 @@ Func Tr($key)
 			If $Language == "zh" Then Return "传送门决斗"
 			Return "Gate Duel"
 		Case "helpText"
-			If $Language == "zh" Then Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
-				"- 所有自动化功能默认从街头区域开始使用。" & @CRLF & _
-				"- 如果机器人卡住，按 F10 终止。需要暂停时按 F9，再按一次继续。" & @CRLF & @CRLF & _
-				"街头决斗" & @CRLF & _
-				"- 循环区域：到达工作室区域后会返回传送门区域继续。" & @CRLF & @CRLF & _
-				"请设置正确分辨率以保证识别和点击准确：" & @CRLF & _
-				"Windows：1366x768，缩放 100%" & @CRLF & _
-				"Duel Links：1280x720（Alt + Enter 切换窗口模式）"
-			Return "https://github.com/ftuyama/duel-links-bot" & @CRLF & @CRLF & _
-				"- All bot functions assume you are in the street area." & @CRLF & _
-				"- If the bot gets stuck, press F10 to terminate it. Press F9 to pause and press it again to continue." & @CRLF & @CRLF & _
-				"Street Duel" & @CRLF & _
-				"- Loop area: the bot returns to the Gate Area after the Studio Area." & @CRLF & @CRLF & _
-				"Set the correct resolution to make it work:" & @CRLF & _
-				"Windows:    1366x768, scale 100%" & @CRLF & _
-				"Duel Links: 1280x720 (Alt + Enter toggles window mode)"
+			If $Language == "zh" Then Return "推荐使用 MuMu 12 后台挂机：" & @CRLF & @CRLF & _
+				"1. 打开 MuMu 12，开启 ADB/调试。" & @CRLF & _
+				"2. 设置竖屏 720x1280。" & @CRLF & _
+				"3. 登录 Duel Links，停在游戏主界面。" & @CRLF & _
+				"4. 点击开始决斗。" & @CRLF & @CRLF & _
+				"程序会自动识别已连接的模拟器并在后台截图、点击。不要同时连接多个模拟器实例。"
+			Return "Recommended MuMu 12 background mode:" & @CRLF & @CRLF & _
+				"1. Start MuMu 12 and enable ADB/debugging." & @CRLF & _
+				"2. Set portrait resolution to 720x1280." & @CRLF & _
+				"3. Log in to Duel Links and stay on the main screen." & @CRLF & _
+				"4. Click Start Duel." & @CRLF & @CRLF & _
+				"The bot auto-detects one connected emulator and uses background screenshots/taps. Do not connect multiple emulator instances."
 	EndSwitch
 	Return $key
 EndFunc
 
 Func Set_status($isRunning)
+	If $UseAdbBackend Then
+		GUICtrlSetData($l_status, "MuMu: " & $ClientWidth & "x" & $ClientHeight)
+		Return
+	EndIf
 	If $isRunning Then
 		GUICtrlSetData($l_status, Tr("running"))
 	Else

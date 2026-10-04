@@ -1,0 +1,98 @@
+{
+    "天梯-主页模式命中": {
+        "recognition": {
+            "type": "Custom",
+            "param": {
+                "custom_recognition": "MarvelSessionGate",
+                "custom_recognition_param": {
+                    "command": "is_ladder_mode"
+                }
+            }
+        },
+        "next": [
+            "天梯-点击开战"
+        ]
+    },
+    "天梯-点击开战": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    760,
+                    800,
+                    400,
+                    200
+                ],
+                "expected": [
+                    "^开战$"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1500,
+        "next": [
+            "公共-比赛开始"
+        ],
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "天梯-整场结果": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    580,
+                    40,
+                    600,
+                    160
+                ],
+                "only_rec": true,
+                "expected": [
+                    "战斗胜利",
+                    "战斗失败"
+                ]
+            }
+        },
+        "next": [
+            "天梯-结果后状态"
+        ]
+    },
+    "天梯-结果后状态": {
+        "next": [
+            "征服-结果继续",
+            "天梯-返回主页"
+        ],
+        "rate_limit": 300,
+        "timeout": 30000,
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "天梯-返回主页": {
+        "recognition": {
+            "type": "And",
+            "param": {
+                "all_of": [
+                    "公共-首页开战按钮",
+                    "公共-首页标签"
+                ],
+                "box_index": 0
+            }
+        },
+        "next": [
+            "天梯-停止判断"
+        ],
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "天梯-停止判断": {
+        "next": [
+            "日常-对局后继续处理",
+            "公共-停止判断"
+        ]
+    }
+}

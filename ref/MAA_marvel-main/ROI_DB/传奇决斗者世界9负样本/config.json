@@ -1,0 +1,22 @@
+{
+  "name": "传奇决斗者世界9负样本",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 423,
+    "y": 1167,
+    "width": 87,
+    "height": 70
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 466,
+    "y": 1202
+  },
+  "scene": "",
+  "tags": []
+}

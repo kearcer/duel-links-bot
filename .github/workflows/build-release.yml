@@ -65,8 +65,10 @@ jobs:
             Stop-Process -Id $process.Id -Force
             throw "AutoIt3Wrapper timed out after 120 seconds"
           }
-          if ($process.ExitCode -ne 0) {
-            throw "AutoIt3Wrapper failed with exit code $($process.ExitCode)"
+          $process.Refresh()
+          $exitCode = $process.ExitCode
+          if ($null -ne $exitCode -and $exitCode -ne 0) {
+          throw "AutoIt3Wrapper failed with exit code $exitCode"
           }
 
           $compiled = Join-Path (Get-Location) "gui_dlpc.exe"

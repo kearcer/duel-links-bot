@@ -1,0 +1,302 @@
+{
+    "征服-赛前页面": {
+        "recognition": {
+            "type": "And",
+            "param": {
+                "all_of": [
+                    "征服-赛前对战编号",
+                    "征服-赛前开战按钮"
+                ],
+                "box_index": 1
+            }
+        },
+        "next": [
+            "征服-首次选择卡组判断",
+            "征服-点击开战"
+        ]
+    },
+    "征服-首次选择卡组判断": {
+        "recognition": {
+            "type": "Custom",
+            "param": {
+                "custom_recognition": "MarvelSessionGate",
+                "custom_recognition_param": {
+                    "command": "should_select_deck"
+                }
+            }
+        },
+        "next": [
+            "征服-打开卡组列表"
+        ],
+        "on_error": [
+            "征服-点击开战"
+        ]
+    },
+    "征服-赛前对战编号": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    700,
+                    180,
+                    520,
+                    520
+                ],
+                "expected": [
+                    "对战[0-9]+",
+                    "^VS$"
+                ]
+            }
+        }
+    },
+    "征服-赛前开战按钮": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    800,
+                    780,
+                    320,
+                    170
+                ],
+                "expected": [
+                    "^开战$"
+                ]
+            }
+        }
+    },
+    "征服-打开卡组列表": {
+        "recognition": {
+            "type": "And",
+            "param": {
+                "all_of": [
+                    "征服-赛前对战编号",
+                    "征服-赛前开战按钮"
+                ],
+                "box_index": 1
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    755,
+                    785,
+                    65,
+                    65
+                ]
+            }
+        },
+        "post_delay": 800,
+        "next": [
+            "征服-选择指定卡组",
+            "征服-卡组未找到回退"
+        ]
+    },
+    "征服-选择指定卡组": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    80,
+                    580,
+                    1760,
+                    340
+                ],
+                "expected": [
+                    "^(?!0$)0$"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 800,
+        "next": [
+            "征服-验证指定卡组"
+        ],
+        "on_error": [
+            "征服-卡组未找到回退"
+        ]
+    },
+    "征服-验证指定卡组": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    700,
+                    760,
+                    180,
+                    170
+                ],
+                "expected": [
+                    "^(?!0$)0$"
+                ]
+            }
+        },
+        "timeout": 2500,
+        "next": [
+            "征服-卡组选择完成标记"
+        ],
+        "on_error": [
+            "征服-卡组选择验证失败回退"
+        ]
+    },
+    "征服-卡组选择完成标记": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "MarvelRecordEvent",
+                "custom_action_param": {
+                    "event": "deck_selection_succeeded"
+                }
+            }
+        },
+        "next": [
+            "征服-点击开战"
+        ]
+    },
+    "征服-卡组未找到回退": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "MarvelRecordEvent",
+                "custom_action_param": {
+                    "event": "deck_selection_fallback_not_found"
+                }
+            }
+        },
+        "next": [
+            "征服-卡组未找到返回"
+        ]
+    },
+    "征服-卡组未找到返回": {
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 4
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "征服-点击开战"
+        ]
+    },
+    "征服-卡组选择验证失败回退": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "MarvelRecordEvent",
+                "custom_action_param": {
+                    "event": "deck_selection_fallback_verification_failed"
+                }
+            }
+        },
+        "next": [
+            "征服-点击开战"
+        ]
+    },
+    "征服-点击开战": {
+        "pre_delay": 2500,
+        "recognition": {
+            "type": "And",
+            "param": {
+                "all_of": [
+                    "征服-赛前对战编号",
+                    "征服-赛前开战按钮"
+                ],
+                "box_index": 1
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 2000,
+        "next": [
+            "征服-确认卡组页面"
+        ],
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "征服-确认卡组页面": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    720,
+                    280,
+                    480,
+                    180
+                ],
+                "expected": [
+                    "确认卡组"
+                ]
+            }
+        },
+        "next": [
+            "征服-确认使用卡组"
+        ],
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "征服-确认使用卡组": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    940,
+                    650,
+                    240,
+                    150
+                ],
+                "expected": [
+                    "^确认$"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 2000,
+        "next": [
+            "公共-比赛开始"
+        ],
+        "on_error": [
+            "公共-恢复决策"
+        ]
+    },
+    "征服-赛前删除负样本": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    600,
+                    720,
+                    300,
+                    260
+                ],
+                "expected": [
+                    "^删除$"
+                ]
+            }
+        }
+    },
+    "征服-赛前商店负样本": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    1050,
+                    720,
+                    300,
+                    260
+                ],
+                "expected": [
+                    "^商店$"
+                ]
+            }
+        }
+    }
+}

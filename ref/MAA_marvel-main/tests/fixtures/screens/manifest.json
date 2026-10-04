@@ -1,0 +1,21 @@
+{
+    "screen_size": [1920, 1080],
+    "screens": [
+        "tests/fixtures/screens/battle/card_detail.png",
+        "tests/fixtures/screens/battle/normal_turn.png",
+        "tests/fixtures/screens/conquest/active_run.png",
+        "tests/fixtures/screens/conquest/deck_confirmation.png",
+        "tests/fixtures/screens/conquest/prematch_clean.png",
+        "tests/fixtures/screens/conquest/tier_infinite_paid.png",
+        "tests/fixtures/screens/conquest/tier_proving_grounds.png",
+        "tests/fixtures/screens/main/home.png",
+        "tests/fixtures/screens/main/modes.png",
+        "tests/fixtures/screens/main/modes_lower.png",
+        "tests/fixtures/screens/mail/inbox.png",
+        "tests/fixtures/screens/mail/reward_detail_claimed.png",
+        "tests/fixtures/screens/mail/reward_detail_unclaimed.png",
+        "tests/fixtures/screens/mail/reward_overlay.png",
+        "tests/fixtures/screens/recovery/exit_confirmation.png"
+    ],
+    "templates": []
+}

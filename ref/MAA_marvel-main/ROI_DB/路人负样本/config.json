@@ -1,0 +1,20 @@
+{
+  "name": "路人负样本",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 612,
+    "y": 503,
+    "width": 107,
+    "height": 114
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

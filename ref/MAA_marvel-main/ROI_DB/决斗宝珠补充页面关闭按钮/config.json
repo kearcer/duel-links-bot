@@ -1,0 +1,22 @@
+{
+  "name": "决斗宝珠补充页面关闭按钮",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 279,
+    "y": 1133,
+    "width": 141,
+    "height": 53
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 349,
+    "y": 1159
+  },
+  "scene": "",
+  "tags": []
+}

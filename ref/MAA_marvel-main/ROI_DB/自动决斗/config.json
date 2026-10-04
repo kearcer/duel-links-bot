@@ -1,0 +1,22 @@
+{
+  "name": "自动决斗",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 368,
+    "y": 1065,
+    "width": 345,
+    "height": 101
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "custom",
+    "x": 153,
+    "y": 1245
+  },
+  "scene": "",
+  "tags": []
+}

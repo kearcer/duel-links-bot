@@ -1,0 +1,1 @@
+﻿"""Standalone ROI annotation tool."""

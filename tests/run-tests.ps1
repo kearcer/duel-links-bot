@@ -81,13 +81,25 @@ function Test-BotControlContract {
   Assert-True ($core -match 'Func\s+Click\(') "Click() wrapper is missing"
   Assert-True ($core -match 'Func\s+initial_screen\(') "initial_screen() wrapper is missing"
   Assert-True ($core -match 'SnapShot\(0, 0, 0, 0\)') "Area detection does not capture the full client snapshot"
-  Assert-True ($core -match 'FFBestSpot\(7, 4, 9, 655, 710, 0x001AFF') "Area detection uses an invalid y reference"
-  Assert-True ($core -match 'FFGetPixel\(\$x, \$y, 0\)') "Blue-score detection uses the wrong snapshot slot"
+  Assert-True ($core -match 'FFBestSpot\(7, 4, 9, 655, 710') "Area detection does not use client-relative coordinates"
+  Assert-True ($core -match 'FFGetPixel\(\$x, \$y, 0\)') "Blue-score detection does not read client-relative pixels"
   Assert-True ($core -match 'MouseClick\(') "MouseClick() is missing from the input-control path"
-  Assert-True ($core -match 'MouseMove\(') "MouseMove() is missing from the input-control path"
+  Assert-True ($core -match '_ScreenCapture_Capture\(\$screenPath') "Debug capture does not save an OS screen crop"
+  Assert-True ($core -match 'Func\s+Save_duelist_hit_debug_snapshot\(') "Duelist hit debug capture helper is missing"
+  Assert-True ($core -match 'Save_duelist_hit_debug_snapshot\(\$hObject\[0\],\s*\$pos,\s*10\)') "Duelist search does not save the matched 10x10 debug crop"
+  Assert-True ($core -match '_ScreenCapture_Capture\(\$path') "Duelist hit debug crop is not saved from the OS screen capture path"
+  Assert-True ($core -match 'Func\s+Initialize_adb_backend\(') "ADB emulator backend initialization is missing"
+  Assert-True ($core -match 'exec-out') "ADB backend does not capture emulator screenshots"
+  Assert-True ($core -match 'screencap -p') "ADB backend does not capture emulator screenshots"
+  Assert-True ($core -match 'input tap') "ADB backend does not send emulator taps"
+  Assert-True ($core -match 'Global\s+\$AdbBaseClientWidth\s*=\s*720') "ADB backend does not define the portrait width"
+  Assert-True ($core -match 'Global\s+\$AdbBaseClientHeight\s*=\s*1280') "ADB backend does not define the portrait height"
+  Assert-True ($core -match 'Find_adb_path\(') "ADB path is not discovered automatically"
+  Assert-True ($core -notmatch 'DLBOT_BACKEND') "ADB backend still requires an environment backend setting"
 }
 
 function Test-ReleaseWorkflowContract {
+  Assert-True (Test-Path (Join-Path $repoRoot "build-local.ps1")) "Local build script is missing"
   $workflow = Read-RepoFile ".github/workflows/build-release.yml"
 
   Assert-True ($workflow -match 'tags:\s*\r?\n\s*-\s+"v\*"') "Release workflow is not triggered by v* tags"
