@@ -1,14 +1,14 @@
 {
-  "name": "人物对话界面识别",
+  "name": "角色和卡组的选择",
   "base_resolution": {
     "width": 720,
     "height": 1280
   },
   "roi": {
-    "x": 28,
-    "y": 860,
-    "width": 33,
-    "height": 42
+    "x": 245,
+    "y": 321,
+    "width": 246,
+    "height": 50
   },
   "type": "template",
   "threshold": 0.85,

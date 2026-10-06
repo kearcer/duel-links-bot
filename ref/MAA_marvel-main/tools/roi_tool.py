@@ -29,6 +29,17 @@ TYPE_LABELS = {
 }
 
 
+def capture_adb(adb: str, device: str | None = None) -> Image.Image:
+    if not adb:
+        raise ValueError("未配置 ADB")
+    command = [adb]
+    if device:
+        command += ["-s", device]
+    command += ["exec-out", "screencap", "-p"]
+    from io import BytesIO
+    return Image.open(BytesIO(subprocess.check_output(command, timeout=15))).convert("RGB")
+
+
 class ROIApp:
     def __init__(self, root: tk.Tk, db: Path, image_path: Path | None = None, adb: str | None = None, device: str | None = None) -> None:
         self.root = root
@@ -136,14 +147,7 @@ class ROIApp:
             messagebox.showerror("截图失败", str(error))
 
     def _capture_image(self) -> Image.Image:
-        if not self.adb:
-            raise ValueError("未配置 ADB")
-        command = [self.adb]
-        if self.device:
-            command += ["-s", self.device]
-        command += ["exec-out", "screencap", "-p"]
-        from io import BytesIO
-        return Image.open(BytesIO(subprocess.check_output(command, timeout=15))).convert("RGB")
+        return capture_adb(self.adb, self.device)
 
     def choose_image(self) -> None:
         path = filedialog.askopenfilename(filetypes=[("图片", "*.png *.jpg *.jpeg"), ("所有文件", "*.*")])

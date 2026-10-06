@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 rem MuMu 12 ADB connection.
 set "ADB_PATH=D:\executer\MuMu\MuMuPlayer-12.0\nx_main\adb.exe"
-set "DEVICE=192.168.50.111:16384"
+set "DEVICE=192.168.50.111:5555"
 set "ROI_DB=%~dp0ROI_DB"
 set "ROI_TOOL=%~dp0tools\roi_tool.py"
 set "PYTHON_EXE=C:\Users\18751\AppData\Local\Programs\Python\Python312\python.exe"

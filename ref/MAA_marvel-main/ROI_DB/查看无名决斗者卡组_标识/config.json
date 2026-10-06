@@ -1,19 +1,21 @@
 {
-  "name": "人物对话界面识别",
+  "name": "查看无名决斗者卡组_标识",
   "base_resolution": {
     "width": 720,
     "height": 1280
   },
   "roi": {
-    "x": 28,
-    "y": 860,
-    "width": 33,
-    "height": 42
+    "x": 206,
+    "y": 588,
+    "width": 302,
+    "height": 49
   },
   "type": "template",
   "threshold": 0.85,
   "click": {
-    "mode": "none"
+    "mode": "center",
+    "x": 357,
+    "y": 612
   },
   "scene": "",
   "tags": []

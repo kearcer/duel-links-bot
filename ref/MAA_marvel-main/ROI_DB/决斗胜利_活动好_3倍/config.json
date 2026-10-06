@@ -1,14 +1,14 @@
 {
-  "name": "人物对话界面识别",
+  "name": "决斗胜利_活动好_3倍",
   "base_resolution": {
     "width": 720,
     "height": 1280
   },
   "roi": {
-    "x": 28,
-    "y": 860,
-    "width": 33,
-    "height": 42
+    "x": 304,
+    "y": 818,
+    "width": 114,
+    "height": 51
   },
   "type": "template",
   "threshold": 0.85,

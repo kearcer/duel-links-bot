@@ -2,6 +2,18 @@
 
 这是一个独立的 Python/Tkinter 工具，用于在游戏截图上人工标注 ROI，并将截图、裁剪图、预览图和 JSON 配置保存到 ROI 数据库。第一版不包含自动战斗、OCR 引擎或状态机。
 
+## 独立挂机入口
+
+运行 `run_duel_stage.bat 1`、`run_duel_stage.bat 2`、`run_duel_stage.bat 3`，或双击后选择阶段。三个阶段不会自动串联，按 Ctrl+C 停止。阶段 0 会按 `阶段1 → 阶段2 → 阶段3` 循环执行，每轮全部完成后等待 5 分钟再开始下一轮，同样只能通过 Ctrl+C 停止。
+
+实现位于 `tools/duel_stages.py`，入口为 `run_stage_1()`、`run_stage_2()`、`run_stage_3()`。也可运行 `python tools\duel_stages.py 1 --adb "ADB路径" --device "设备地址" --db "ROI_DB路径"`。不传 `--device` 时自动选择在线 ADB 设备；列表为空时调用 ADB 同目录的 `MuMuManager.exe adb -v all -c connect`，由 MuMu 自动处理当前 IP 和端口，再检查在线设备。多个在线设备时使用第一个，可用 `--device` 指定。请先启动模拟器并开启 ADB 调试。
+
+设备发现回归测试：在项目目录运行 `python -m unittest tools.test_duel_stages`。
+
+所有识别直接调用验证工具的 `TemplateMatcher`，读取现有配置阈值；点击使用 ROI 中心并按截图分辨率缩放，不使用 ROI 点击类型或视觉搜索。路人及传奇目标使用对应负样本 ROI 的中心。
+
+阶段二以首次点击“切换世界”后的页面作为世界1，固定巡检两轮；每次进入世界时确认特殊页面，决斗结束仍按公共流程等待四标志标准主页面。实际游戏需确认首次世界顺序及战后页面符合这两个约定。
+
 ## 目录
 
 - `tools/roi_tool.py`：GUI 标注工具

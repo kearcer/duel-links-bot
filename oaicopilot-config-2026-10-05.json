@@ -1,0 +1,18 @@
+{
+  "version": "0.4.2",
+  "exportDate": "2026-10-05T00:55:41.737Z",
+  "baseUrl": "https://apinebula.ai/v1",
+  "apiKey": "sk-wmntD8XUyRyVTbJmVmmSyrAHggVHUBhcoqPWM6dgTDWUbocg",
+  "delay": 0,
+  "retry": {
+    "enabled": true,
+    "max_attempts": 3,
+    "interval_ms": 1000,
+    "status_codes": []
+  },
+  "commitLanguage": "Chinese (Simplified)",
+  "commitModel": "",
+  "models": [],
+  "readFileLines": 0,
+  "providerKeys": {}
+}

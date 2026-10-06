@@ -1,14 +1,14 @@
 {
-  "name": "人物对话界面识别",
+  "name": "人物对话界面_物品数量不足",
   "base_resolution": {
     "width": 720,
     "height": 1280
   },
   "roi": {
-    "x": 28,
-    "y": 860,
-    "width": 33,
-    "height": 42
+    "x": 227,
+    "y": 1087,
+    "width": 264,
+    "height": 53
   },
   "type": "template",
   "threshold": 0.85,
