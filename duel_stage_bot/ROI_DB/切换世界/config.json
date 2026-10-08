@@ -1,0 +1,22 @@
+{
+  "name": "切换世界",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 137,
+    "y": 1138,
+    "width": 30,
+    "height": 29
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "custom",
+    "x": 153,
+    "y": 1245
+  },
+  "scene": "",
+  "tags": []
+}

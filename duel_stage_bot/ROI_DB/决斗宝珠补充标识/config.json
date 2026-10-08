@@ -1,0 +1,22 @@
+{
+  "name": "决斗宝珠补充标识",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 52,
+    "y": 241,
+    "width": 139,
+    "height": 134
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 121,
+    "y": 308
+  },
+  "scene": "",
+  "tags": []
+}

@@ -1,0 +1,22 @@
+{
+  "name": "传奇决斗者世界3负样本",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 425,
+    "y": 572,
+    "width": 81,
+    "height": 73
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 465,
+    "y": 608
+  },
+  "scene": "",
+  "tags": []
+}

@@ -1,0 +1,22 @@
+{
+  "name": "战斗结束_好友列表",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 283,
+    "y": 209,
+    "width": 150,
+    "height": 42
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 358,
+    "y": 230
+  },
+  "scene": "",
+  "tags": []
+}

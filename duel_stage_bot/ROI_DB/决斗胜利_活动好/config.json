@@ -1,0 +1,20 @@
+{
+  "name": "决斗胜利_活动好",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 297,
+    "y": 768,
+    "width": 124,
+    "height": 52
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

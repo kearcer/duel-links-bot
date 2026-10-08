@@ -1,0 +1,20 @@
+{
+  "name": "人物对话界面识别",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 28,
+    "y": 860,
+    "width": 33,
+    "height": 42
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

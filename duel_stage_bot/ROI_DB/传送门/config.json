@@ -1,0 +1,20 @@
+{
+  "name": "传送门",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 49,
+    "y": 1252,
+    "width": 81,
+    "height": 27
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

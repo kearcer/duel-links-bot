@@ -2,4 +2,9 @@
 TRACER\.TXT
 GetColor!.lnk
 dist/
+__pycache__/
+*.pyc
+/duel_stage_bot/build/
+/duel_stage_bot/dist/
+/duel_stage_bot/package/
 /ref/MAA_marvel-main/DuelLinksMaa-win-x64-v0.3.0-local.zip

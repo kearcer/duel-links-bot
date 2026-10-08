@@ -1,0 +1,20 @@
+{
+  "name": "没有发现网络链接_重启",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 360,
+    "y": 658,
+    "width": 302,
+    "height": 111
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

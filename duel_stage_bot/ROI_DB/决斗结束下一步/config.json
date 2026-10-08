@@ -1,0 +1,20 @@
+{
+  "name": "决斗结束下一步",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 212,
+    "y": 1168,
+    "width": 295,
+    "height": 89
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}

@@ -1,0 +1,22 @@
+{
+  "name": "查看无名决斗者卡组_取消",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 85,
+    "y": 661,
+    "width": 245,
+    "height": 67
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 207,
+    "y": 694
+  },
+  "scene": "",
+  "tags": []
+}

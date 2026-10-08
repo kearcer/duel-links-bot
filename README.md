@@ -18,6 +18,26 @@ powershell -ExecutionPolicy Bypass -File .\build-local.ps1
 
 The executable and runtime files are written to `dist\`. The script runs the repository contract tests before compiling.
 
+## Standalone duel stage bot
+
+The `duel_stage_bot` directory contains the standalone package for `run_duel_stage.bat`: Python entrypoint, ROI templates, image matching helpers, dependencies, local PyInstaller build script, and GitHub Actions packaging workflow. It also includes `run_roi_tool.bat` and `tools/roi_tool.py` for maintaining the same `ROI_DB`; this helper is committed with the package but is intentionally not part of the CI executable build.
+
+Source run:
+
+```powershell
+cd duel_stage_bot
+python -m pip install -r requirements.txt
+.\run_duel_stage.bat 1
+```
+
+Local exe build:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\duel_stage_bot\build.ps1
+```
+
+GitHub Actions workflow `.github/workflows/build-duel-stage.yml` uploads a zipped Windows executable package on pushes, pull requests, manual runs, and `v*` release tags.
+
 ## MuMu emulator mode
 
 For normal use, run the bot with MuMu 12 and the Android version of Duel Links. The bot auto-detects one connected ADB device, captures the emulator with `adb exec-out screencap -p`, and taps with `adb shell input tap`, so it can keep farming while the emulator is in the background.
