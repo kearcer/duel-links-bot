@@ -1,28 +1,56 @@
-# Duel Links PC Bot
-Simple bot with GUI using AutoIt language for farming Duel Links on PC/Steam.
+# Duel Link Bot
 
-## Local build
+这是一个面向 Windows + MuMu 12/ADB 的《Yu-Gi-Oh! Duel Links》自动阶段脚本包。当前仓库的可用入口集中在 `duel_stage_bot` 目录，包含阶段执行脚本、ROI 模板库、图像匹配代码和 ROI 标注工具。
 
-The repository includes a local build script. Install the AutoIt compiler and SciTE wrapper once:
+## 快速使用
 
-```powershell
-winget install --id AutoIt.AutoIt --exact
-winget install --id AutoIt.SciTE4AutoIt3 --exact
-```
-
-Then build the executable without creating a Git tag or GitHub release:
+推荐从 GitHub Releases 下载最新的 `duel-stage-bot-*.zip`，解压后进入目录运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build-local.ps1
+.\run_duel_stage.bat
 ```
 
-The executable and runtime files are written to `dist\`. The script runs the repository contract tests before compiling.
+也可以直接指定阶段：
 
-## Standalone duel stage bot
+```powershell
+.\run_duel_stage.bat 1
+.\run_duel_stage.bat 2
+.\run_duel_stage.bat 3
+```
 
-The `duel_stage_bot` directory contains the standalone package for `run_duel_stage.bat`: Python entrypoint, ROI templates, image matching helpers, dependencies, local PyInstaller build script, and GitHub Actions packaging workflow. It also includes `run_roi_tool.bat` and `tools/roi_tool.py` for maintaining the same `ROI_DB`; this helper is committed with the package but is intentionally not part of the CI executable build.
+阶段含义由脚本内逻辑定义：
 
-Source run:
+- `0`：组合阶段入口。
+- `1`：路人决斗流程。
+- `2`：传奇决斗者世界巡检流程。
+- `3`：传送门循环决斗流程。
+
+## ADB 配置
+
+脚本通过 ADB 截图和点击模拟器。默认按以下顺序查找 ADB：
+
+1. 程序目录下的 `adb.exe`
+2. 程序目录下的 `platform-tools\adb.exe`
+3. 系统 `PATH` 中的 `adb`
+
+如果 ADB 在其他位置，可以设置环境变量：
+
+```powershell
+$env:DUEL_STAGE_ADB="D:\path\to\adb.exe"
+.\run_duel_stage.bat 1
+```
+
+也可以直接运行 Python 入口并传参：
+
+```powershell
+python .\tools\duel_stages.py 1 --adb "D:\path\to\adb.exe" --device "127.0.0.1:16384"
+```
+
+未指定 `--device` 时脚本会自动选择在线 ADB 设备；如果没有在线设备，会尝试调用 ADB 同目录的 `MuMuManager.exe` 连接 MuMu 实例。
+
+## 源码运行
+
+如果不使用 Release 里的 exe，也可以直接运行源码：
 
 ```powershell
 cd duel_stage_bot
@@ -30,46 +58,75 @@ python -m pip install -r requirements.txt
 .\run_duel_stage.bat 1
 ```
 
-Local exe build:
+依赖主要是 `Pillow`、`numpy`、`opencv-python`。
+
+## ROI 标注工具
+
+ROI 工具用于查看、维护和新增 `ROI_DB` 中的识别模板。它随仓库上传，但不会进入 CI 的 exe 打包流程。
+
+源码方式运行：
+
+```powershell
+cd duel_stage_bot
+python -m pip install -r requirements.txt
+.\run_roi_tool.bat
+```
+
+工具默认加载 `duel_stage_bot\ROI_DB`。如果没有配置 ADB，工具仍会启动，可以通过“加载截图”查看和维护已有 ROI。
+
+ROI 工具可用这些环境变量覆盖默认值：
+
+```powershell
+$env:ADB_PATH="D:\path\to\adb.exe"
+$env:DEVICE="127.0.0.1:16384"
+.\run_roi_tool.bat
+```
+
+## 目录结构
+
+```text
+duel_stage_bot/
+	run_duel_stage.bat        # 阶段执行入口，Release 包中优先调用 duel_stages.exe
+	run_roi_tool.bat          # ROI 标注工具入口，不参与 CI exe 打包
+	requirements.txt          # 源码运行依赖
+	duel_stages.spec          # PyInstaller 打包配置
+	build.ps1                 # 本地打包脚本
+	ROI_DB/                   # 已有 ROI 模板和配置
+	tools/
+		duel_stages.py          # 阶段自动化主逻辑
+		roi_tool.py             # ROI GUI 标注工具
+		roi_manager.py          # ROI 配置读写和坐标缩放
+		template_matcher.py     # OpenCV 模板匹配
+		light_cyan_duelist_detector.py
+```
+
+## 本地打包
+
+在仓库根目录执行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\duel_stage_bot\build.ps1
 ```
 
-GitHub Actions workflow `.github/workflows/build-duel-stage.yml` uploads a zipped Windows executable package on pushes, pull requests, manual runs, and `v*` release tags.
+构建产物会生成在 `duel_stage_bot\package`，其中包含：
 
-## MuMu emulator mode
+- `duel_stages.exe`
+- `run_duel_stage.bat`
+- `ROI_DB/`
+- `README.md`
 
-For normal use, run the bot with MuMu 12 and the Android version of Duel Links. The bot auto-detects one connected ADB device, captures the emulator with `adb exec-out screencap -p`, and taps with `adb shell input tap`, so it can keep farming while the emulator is in the background.
+## GitHub Actions 打包
 
-Recommended emulator display:
+[.github/workflows/build-duel-stage.yml](.github/workflows/build-duel-stage.yml) 会在 Windows runner 上构建 `duel_stages.exe`。
 
-- portrait `720x1280`
-- ADB/debugging enabled in MuMu
-- exactly one emulator instance connected
+- push 到 `master`、pull request、手动触发 workflow：上传 Actions artifact。
+- 推送 `v*` tag：上传 artifact，并创建 GitHub Release。
 
-No environment variables are required for the bundled package. For local development, the bot looks for ADB in this order: package directory, `platform-tools\adb.exe`, `E:\Android\android-sdk\platform-tools\adb.exe`, then `adb` from `PATH`.
+当前 workflow 会强制 Python 使用 UTF-8 输出，避免 Windows runner 在打印中文帮助文本时使用 `cp1252` 导致编码失败。
 
-**Feature**
-  - Gate duel: duel any available legendary duelist in the gate.
-  - Street duel: duel any duelist in the street and pickup loot
-  - Collect gems in the scenery.
-  - Event Specific
-	- Battle City Showdown
-		- Auto pick Card Lottery -
-		- Bot farm Devine Trial Yami Yugi Lv. 50
-		- Bot play City Showdown track
+## 注意事项
 
-
-## Tutorial
-
-1. Start MuMu 12 and enable ADB/debugging.
-2. Set MuMu display to portrait `720x1280`.
-3. Open the Android version of Duel Links and log in.
-4. Start `duel-links-bot.exe` and click Start Duel.
-
-The legacy Steam/window mode is still available as a fallback when no emulator is connected, but the recommended path is MuMu background mode.
-
-## Screenshot
-
-![image](https://github.com/ftuyama/duel-links-bot/assets/11530478/e37cbdb2-2939-49e0-a686-4d1d2494bf0d)
+- 请先启动 MuMu 12，并开启 ADB/调试功能。
+- 建议只保持一个模拟器实例在线；多个设备在线时脚本默认选择第一个，可用 `--device` 指定。
+- `ROI_DB` 中的模板和坐标与截图分辨率相关，实际使用前建议先用 ROI 工具验证关键模板。
+- 脚本会执行 ADB 点击操作，运行前请确认游戏停留在预期页面。
