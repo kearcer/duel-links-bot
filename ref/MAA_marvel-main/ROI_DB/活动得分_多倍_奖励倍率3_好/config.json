@@ -1,0 +1,20 @@
+{
+  "name": "活动得分_多倍_奖励倍率3_好",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 284,
+    "y": 887,
+    "width": 129,
+    "height": 62
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "none"
+  },
+  "scene": "",
+  "tags": []
+}
