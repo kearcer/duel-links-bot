@@ -1,6 +1,6 @@
 # Duel Link Bot
 
-这是一个面向 Windows + MuMu 12/ADB 的《Yu-Gi-Oh! Duel Links》自动阶段脚本包。当前仓库的可用入口集中在 `duel_stage_bot` 目录，包含阶段执行脚本、ROI 模板库、图像匹配代码和 ROI 标注工具。
+这是一个面向 Windows + MuMu 12/ADB 的《Yu-Gi-Oh! Duel Links》自动阶段脚本包。仓库根目录就是可运行工程，包含阶段执行脚本、ROI 模板库、图像匹配代码和 ROI 标注工具。
 
 ## 快速使用
 
@@ -53,7 +53,6 @@ python .\tools\duel_stages.py 1 --adb "D:\path\to\adb.exe" --device "127.0.0.1:1
 如果不使用 Release 里的 exe，也可以直接运行源码：
 
 ```powershell
-cd duel_stage_bot
 python -m pip install -r requirements.txt
 .\run_duel_stage.bat 1
 ```
@@ -67,12 +66,11 @@ ROI 工具用于查看、维护和新增 `ROI_DB` 中的识别模板。它随仓
 源码方式运行：
 
 ```powershell
-cd duel_stage_bot
 python -m pip install -r requirements.txt
 .\run_roi_tool.bat
 ```
 
-工具默认加载 `duel_stage_bot\ROI_DB`。如果没有配置 ADB，工具仍会启动，可以通过“加载截图”查看和维护已有 ROI。
+工具默认加载根目录下的 `ROI_DB`。如果没有配置 ADB，工具仍会启动，可以通过“加载截图”查看和维护已有 ROI。
 
 ROI 工具可用这些环境变量覆盖默认值：
 
@@ -85,19 +83,18 @@ $env:DEVICE="127.0.0.1:16384"
 ## 目录结构
 
 ```text
-duel_stage_bot/
-	run_duel_stage.bat        # 阶段执行入口，Release 包中优先调用 duel_stages.exe
-	run_roi_tool.bat          # ROI 标注工具入口，不参与 CI exe 打包
-	requirements.txt          # 源码运行依赖
-	duel_stages.spec          # PyInstaller 打包配置
-	build.ps1                 # 本地打包脚本
-	ROI_DB/                   # 已有 ROI 模板和配置
-	tools/
-		duel_stages.py          # 阶段自动化主逻辑
-		roi_tool.py             # ROI GUI 标注工具
-		roi_manager.py          # ROI 配置读写和坐标缩放
-		template_matcher.py     # OpenCV 模板匹配
-		light_cyan_duelist_detector.py
+run_duel_stage.bat        # 阶段执行入口，Release 包中优先调用 duel_stages.exe
+run_roi_tool.bat          # ROI 标注工具入口，不参与 CI exe 打包
+requirements.txt          # 源码运行依赖
+duel_stages.spec          # PyInstaller 打包配置
+build.ps1                 # 本地打包脚本
+ROI_DB/                   # 已有 ROI 模板和配置
+tools/
+  duel_stages.py          # 阶段自动化主逻辑
+  roi_tool.py             # ROI GUI 标注工具
+  roi_manager.py          # ROI 配置读写和坐标缩放
+  template_matcher.py     # OpenCV 模板匹配
+  light_cyan_duelist_detector.py
 ```
 
 ## 本地打包
@@ -105,10 +102,10 @@ duel_stage_bot/
 在仓库根目录执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\duel_stage_bot\build.ps1
+powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-构建产物会生成在 `duel_stage_bot\package`，其中包含：
+构建产物会生成在 `package`，其中包含：
 
 - `duel_stages.exe`
 - `run_duel_stage.bat`
