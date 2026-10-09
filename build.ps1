@@ -16,8 +16,11 @@ try {
   New-Item -ItemType Directory -Force -Path $package | Out-Null
   Copy-Item -LiteralPath (Join-Path $root "dist\duel_stages.exe") -Destination $package -Force
   Copy-Item -LiteralPath (Join-Path $root "run_duel_stage.bat") -Destination $package -Force
+  Copy-Item -LiteralPath (Join-Path $root "requirements.txt") -Destination $package -Force
   Copy-Item -LiteralPath (Join-Path $root "README.md") -Destination $package -Force
   Copy-Item -LiteralPath (Join-Path $root "ROI_DB") -Destination $package -Recurse -Force
+  Copy-Item -LiteralPath (Join-Path $root "tools") -Destination $package -Recurse -Force
+  Get-ChildItem -LiteralPath $package -Directory -Recurse -Filter "__pycache__" | Remove-Item -Recurse -Force
 
   Write-Host "Package ready: $package" -ForegroundColor Green
 }

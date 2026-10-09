@@ -9,8 +9,8 @@ import time
 from pathlib import Path
 
 try:
-    from .roi_manager import ROIManager
-    from .template_matcher import TemplateMatcher
+    from tools.roi_manager import ROIManager
+    from tools.template_matcher import TemplateMatcher
 except ImportError:
     from roi_manager import ROIManager
     from template_matcher import TemplateMatcher
@@ -19,7 +19,7 @@ except ImportError:
 def app_dir():
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
-    return Path(__file__).resolve().parents[1]
+    return Path(__file__).resolve().parent
 
 
 APP_DIR = app_dir()

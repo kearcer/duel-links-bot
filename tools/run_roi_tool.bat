@@ -2,11 +2,11 @@
 setlocal
 cd /d "%~dp0"
 
-if not defined ADB_PATH if exist "%~dp0adb.exe" set "ADB_PATH=%~dp0adb.exe"
-if not defined ADB_PATH if exist "%~dp0platform-tools\adb.exe" set "ADB_PATH=%~dp0platform-tools\adb.exe"
+if not defined ADB_PATH if exist "%~dp0..\adb.exe" set "ADB_PATH=%~dp0..\adb.exe"
+if not defined ADB_PATH if exist "%~dp0..\platform-tools\adb.exe" set "ADB_PATH=%~dp0..\platform-tools\adb.exe"
 if not defined ADB_PATH set "ADB_PATH=adb"
-set "ROI_DB=%~dp0ROI_DB"
-set "ROI_TOOL=%~dp0tools\roi_tool.py"
+set "ROI_DB=%~dp0..\ROI_DB"
+set "ROI_TOOL=%~dp0roi_tool.py"
 if not defined PYTHON_EXE set "PYTHON_EXE=py -3"
 
 where py >nul 2>nul

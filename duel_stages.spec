@@ -6,7 +6,7 @@ ROOT = Path.cwd()
 
 
 a = Analysis(
-    [str(ROOT / "tools" / "duel_stages.py")],
+    [str(ROOT / "duel_stages.py")],
     pathex=[str(ROOT)],
     binaries=[],
     datas=[(str(ROOT / "ROI_DB"), "ROI_DB")],

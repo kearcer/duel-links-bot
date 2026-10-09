@@ -20,7 +20,7 @@ exit /b 1
 if defined DUEL_STAGE_EXE (
     "%DUEL_STAGE_EXE%" %STAGE%
 ) else (
-    %PYTHON_EXE% "%~dp0tools\duel_stages.py" %STAGE%
+    %PYTHON_EXE% "%~dp0duel_stages.py" %STAGE%
 )
 set "RESULT=%ERRORLEVEL%"
 pause

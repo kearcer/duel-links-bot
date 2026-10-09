@@ -38,8 +38,8 @@ jobs:
       - name: Validate entrypoint
         shell: pwsh
         run: |
-          python -m py_compile tools\duel_stages.py tools\roi_manager.py tools\template_matcher.py tools\light_cyan_duelist_detector.py
-          python tools\duel_stages.py --help
+          python -m py_compile duel_stages.py tools\roi_manager.py tools\template_matcher.py tools\light_cyan_duelist_detector.py
+          python duel_stages.py --help
 
       - name: Build executable
         shell: pwsh
@@ -55,8 +55,10 @@ jobs:
           New-Item -ItemType Directory -Force -Path $package | Out-Null
           Copy-Item "dist\duel_stages.exe" $package -Force
           Copy-Item "run_duel_stage.bat" $package -Force
+          Copy-Item "requirements.txt" $package -Force
           Copy-Item "README.md" $package -Force
           Copy-Item "ROI_DB" $package -Recurse -Force
+          Copy-Item "tools" $package -Recurse -Force
           Compress-Archive -Path "$package\*" -DestinationPath "$package.zip" -Force
           "PACKAGE_NAME=$package" | Out-File -FilePath $env:GITHUB_ENV -Append
 

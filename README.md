@@ -1,6 +1,6 @@
 # Duel Link Bot
 
-这是一个面向 Windows + MuMu 12/ADB 的《Yu-Gi-Oh! Duel Links》自动阶段脚本包。仓库根目录就是可运行工程，包含阶段执行脚本、ROI 模板库、图像匹配代码和 ROI 标注工具。
+这是一个面向 Windows + MuMu 12/ADB 的《Yu-Gi-Oh! Duel Links》自动阶段脚本包。仓库根目录放阶段执行入口，`tools` 目录放 ROI 获取/标注工具和识别辅助代码。
 
 ## 快速使用
 
@@ -43,7 +43,7 @@ $env:DUEL_STAGE_ADB="D:\path\to\adb.exe"
 也可以直接运行 Python 入口并传参：
 
 ```powershell
-python .\tools\duel_stages.py 1 --adb "D:\path\to\adb.exe" --device "127.0.0.1:16384"
+python .\duel_stages.py 1 --adb "D:\path\to\adb.exe" --device "127.0.0.1:16384"
 ```
 
 未指定 `--device` 时脚本会自动选择在线 ADB 设备；如果没有在线设备，会尝试调用 ADB 同目录的 `MuMuManager.exe` 连接 MuMu 实例。
@@ -67,7 +67,7 @@ ROI 工具用于查看、维护和新增 `ROI_DB` 中的识别模板。它随仓
 
 ```powershell
 python -m pip install -r requirements.txt
-.\run_roi_tool.bat
+.\tools\run_roi_tool.bat
 ```
 
 工具默认加载根目录下的 `ROI_DB`。如果没有配置 ADB，工具仍会启动，可以通过“加载截图”查看和维护已有 ROI。
@@ -77,20 +77,20 @@ ROI 工具可用这些环境变量覆盖默认值：
 ```powershell
 $env:ADB_PATH="D:\path\to\adb.exe"
 $env:DEVICE="127.0.0.1:16384"
-.\run_roi_tool.bat
+.\tools\run_roi_tool.bat
 ```
 
 ## 目录结构
 
 ```text
 run_duel_stage.bat        # 阶段执行入口，Release 包中优先调用 duel_stages.exe
-run_roi_tool.bat          # ROI 标注工具入口，不参与 CI exe 打包
+duel_stages.py            # 阶段自动化主逻辑
 requirements.txt          # 源码运行依赖
 duel_stages.spec          # PyInstaller 打包配置
 build.ps1                 # 本地打包脚本
 ROI_DB/                   # 已有 ROI 模板和配置
 tools/
-  duel_stages.py          # 阶段自动化主逻辑
+  run_roi_tool.bat        # ROI 标注工具入口，不参与 CI exe 打包
   roi_tool.py             # ROI GUI 标注工具
   roi_manager.py          # ROI 配置读写和坐标缩放
   template_matcher.py     # OpenCV 模板匹配
@@ -109,6 +109,8 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 
 - `duel_stages.exe`
 - `run_duel_stage.bat`
+- `requirements.txt`
+- `tools/`
 - `ROI_DB/`
 - `README.md`
 
