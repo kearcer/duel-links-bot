@@ -1,0 +1,22 @@
+{
+  "name": "活动传奇决斗者出现",
+  "base_resolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "roi": {
+    "x": 259,
+    "y": 689,
+    "width": 194,
+    "height": 42
+  },
+  "type": "template",
+  "threshold": 0.85,
+  "click": {
+    "mode": "center",
+    "x": 356,
+    "y": 710
+  },
+  "scene": "",
+  "tags": []
+}
